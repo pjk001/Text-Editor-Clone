@@ -102,7 +102,10 @@ export default function Home({database}) {
             <div className='doc-grid'>
                 {docsData.map((doc) => {
                     return (
-                        <div className='doc-grid-child' onClick={() => getID(doc.id)}>
+                        <div
+                            key={doc.id} 
+                            className='doc-grid-child' 
+                            onClick={() => getID(doc.id)}>
                             <p>{doc.title}</p>
                         </div>
                     )
