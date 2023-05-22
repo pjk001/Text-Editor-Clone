@@ -3,12 +3,14 @@ import "./login-signup.css"
 import { auth, app } from "../firebaseConfig"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate = useNavigate('');
 
   const handleEmail = (event) => {
     setEmail(event.target.value);
@@ -23,7 +25,7 @@ export default function Login() {
 
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-
+      navigate("/home");
     console.log(userCredential);
   })
   .catch((error) => {

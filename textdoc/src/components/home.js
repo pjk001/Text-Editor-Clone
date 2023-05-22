@@ -3,6 +3,8 @@ import Modal from './Modal';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { create } from '@mui/material/styles/createTransitions';
+import { signOut } from "firebase/auth";
+import { auth, app } from "../firebaseConfig"
 
 export default function Home({database}) {
     const [open, setOpen] = React.useState(false);
@@ -49,9 +51,23 @@ export default function Home({database}) {
         navigate(`/documents/${id}`)
     }
 
+    //philip
+    const handleSignOut = () => {
+        signOut(auth).then(() => {
+            navigate("/login");
+            console.log('User signed out');
+          }).catch((error) => {
+            console.log(error);
+        });
+    }
+
     return (
         <div className='docs-main'>
             <h1>Docs Clone</h1>
+
+            <button className='sign-out' onClick={handleSignOut}>
+                Sign Out
+            </button>
 
             <button
                 className='create-doc'
@@ -60,11 +76,17 @@ export default function Home({database}) {
                 Create Document
             </button>
 
+            
             <div className='doc-grid'>
                 {docsData.map((doc) => {
                     return (
                         <div className='doc-grid-child' onClick={() => getID(doc.id)}>
                             <p>{doc.title}</p>
+                            <p className='doc-description'>{doc.description}</p>
+                            <p className='doc-date'>Last Updated: {doc.lastUpdated}</p>
+                            <div className='doc-content'>
+                                <p>{doc.textSnippet}</p>
+                            </div>
                         </div>
                     )
                 })}
