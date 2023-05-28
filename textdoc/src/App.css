@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&display=swap');
 
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 .App {
   text-align: center;
 }
@@ -39,47 +45,159 @@
   }
 }
 
-.docs-main{
+.docs-main {
   text-align: center;
   font-family: 'Roboto', sans-serif;
 }
 
-.create-doc{
+.create-doc {
   height: 40px;
   width: 200px;
-  background-color: #ffc107;
+  background-color: #ff9800;
   border: none;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: white;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.add-input{
+.create-doc:hover {
+  background-color: #ffc107;
+  transform: scale(1.05);
+}
+
+.add-input {
   width: 95%;
   height: 40px;
   outline: none;
-  border: 1px solid #676767;
-  border-radius: 0px;
+  border: 1px solid #ffc107;
+  border-radius: 0;
   padding: 10px;
   font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
 }
 
-.button-container{
+.add-input:focus {
+  border-color: #ff9800;
+}
+
+.button-container {
   text-align: center;
   margin: 30px;
 }
 
-.doc-grid{
+.doc-grid {
   display: grid;
-  grid-template-columns: auto auto auto auto;
-  color: whitesmoke;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 20px;
+  color: #ffc107;
   margin-top: 20px;
-  gap: 20px;
-  justify-content: center;
+  justify-items: center;
 }
 
-.doc-grid-child{
+.doc-grid-child {
+  position: relative;
   padding: 20px;
-  background-color: rgb(98, 98, 98);
+  background-color: #4c4c4c;
   width: 300px;
   cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.doc-grid-child:hover {
+  background-color: #363636;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.doc-title {
+  font-size: 18px;
+  color: #ffc107;
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.doc-grid-child:hover .doc-title {
+  color: #ff9800;
+}
+
+.doc-description {
+  font-size: 14px;
+  color: #b3b3b3;
+  transition: color 0.3s ease;
+  white-space: pre-wrap;
+  height: 100px;
+  overflow: hidden;
+}
+
+.doc-grid-child:hover .doc-description {
+  color: #fff;
+}
+
+.doc-date {
+  font-size: 14px;
+  color: #b3b3b3;
+  margin-top: 10px;
+  transition: color 0.3s ease;
+}
+
+.doc-grid-child:hover .doc-date {
+  color: #ff9800;
+}
+
+.doc-grid-child .doc-title,
+.doc-grid-child .doc-description,
+.doc-grid-child .doc-date {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.doc-grid-child:hover .doc-title,
+.doc-grid-child:hover .doc-description,
+.doc-grid-child:hover .doc-date {
+  opacity: 1;
+}
+
+.doc-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: white;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.doc-grid-child:hover .doc-content {
+  opacity: 1;
+}
+
+.sign-out {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #ff9800;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sign-out:hover {
+  background-color: #ffc107;
+}  
