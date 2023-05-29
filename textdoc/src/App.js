@@ -5,6 +5,7 @@ import { app, database } from './firebaseConfig';
 import { Routes, Route } from "react-router-dom";
 
 function App() {
+  
   return (
     <Routes>
       <Route path="/" element={<Home database={database} />} />
