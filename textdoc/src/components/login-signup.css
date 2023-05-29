@@ -7,18 +7,6 @@
   }
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
 @keyframes heartbeat {
   0% {
     transform: scale(1);
@@ -63,7 +51,7 @@ body {
 .welcome-title {
   text-align: center;
   margin-right: 150px;
-  animation: fadeIn 2s ease-in-out, heartbeat 4s ease-in-out infinite;
+  animation: fadeIn 2s ease-in-out, heartbeat 3s ease-in-out infinite;
 }
 
 .vertical-container {
@@ -144,7 +132,6 @@ body {
   margin-bottom: 20px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out;
-  animation: pulse 5s infinite;
 }
 
 .submit-button:hover {

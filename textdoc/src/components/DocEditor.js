@@ -5,6 +5,7 @@ import 'react-quill/dist/quill.snow.css';
 import {collection, doc, updateDoc, onSnapshot} from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './custom-quill.css';
 
 
 export default function DocEditor({database}) {

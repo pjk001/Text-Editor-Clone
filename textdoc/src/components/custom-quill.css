@@ -1,0 +1,55 @@
+.ql-blank {
+  margin-bottom: 50px;
+  min-height: 1000px;
+  background-color: rgb(114, 169, 212);
+}
+
+.ql-editor {
+  min-height: 1000px;
+  border-width: 20px;
+  background-color: rgb(141, 169, 212);
+}
+
+.ql-toolbar button {
+  position: relative;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.ql-toolbar button:hover {
+  transform: scale(1.2) rotate(10deg);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.ql-toolbar button:active {
+  transform: scale(0.9) rotate(-10deg);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.ql-toolbar button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.ql-toolbar button:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out, height 0.3s ease-in-out;
+}
+
+.ql-toolbar button:active:before {
+  width: 200%;
+  height: 200%;
+  opacity: 1;
+}
+
+.ql-toolbar {
+  background-color: rgb(172, 218, 253);
+}
