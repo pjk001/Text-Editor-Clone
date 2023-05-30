@@ -3,7 +3,6 @@ import Modal from './Modal';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { create } from '@mui/material/styles/createTransitions';
-
 // import {user} from '../user.js'
 
 import { auth, app } from "../firebaseConfig"
@@ -11,6 +10,18 @@ import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function Home({database}) {
     const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+    if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/auth.user
+    const uid = user.uid;
+    console.log(uid)
+    // ...
+    } else {
+    // User is signed out
+    // ...
+    }
+    });
     //Sets user to be the currently signed in user.
     //If nobody is signed in, it's set to.
     const user = auth.currentUser;
@@ -21,7 +32,8 @@ export default function Home({database}) {
     const collectionRef = collection(database, 'docInfo')
     const [docsData, setDocsData] = useState([]);
     let navigate = useNavigate();
-
+    var roles = {};
+    roles[user.uid] = "owner";
 
     const createDoc = () => {
 //The roles field contains the data on who can access and edit it.
@@ -31,9 +43,7 @@ export default function Home({database}) {
             addDoc(collectionRef, {
                 title: title,
 
-                roles: {
-                    user: "owner"
-                }
+                roles
             })
             .then(() => {
                 alert('Document created')
