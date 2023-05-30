@@ -1,9 +1,11 @@
 import React, {useState} from "react";
 import "./login-signup.css"
 import { auth, app } from "../firebaseConfig"
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { AuthErrorCodes, signInWithEmailAndPassword } from "firebase/auth";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login() {
 
@@ -29,8 +31,24 @@ export default function Login() {
     console.log(userCredential);
   })
   .catch((error) => {
-    alert(error);
+    const errorMessage = customizedErrorMessage(error.code);
+    toast.error(errorMessage);
   });
+}
+
+const customizedErrorMessage = (errorCode) => {
+  let errorMessage = "Invalid credentials";
+
+  switch (errorCode) {
+    case "auth/invalid-email":
+      errorMessage = "Invalid email";
+      break;
+    case "auth/wrong-password":
+      errorMessage = "Invalid password";
+      break;
+  }
+
+  return errorMessage;
 }
 
   return (
@@ -60,8 +78,8 @@ export default function Login() {
         </div>
       </form>
       </section>
-
       </div>
+      <ToastContainer />
     </>
   );
 }

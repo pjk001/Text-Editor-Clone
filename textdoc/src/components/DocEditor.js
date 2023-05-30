@@ -1,5 +1,5 @@
 import {useState, useEffect, React, useRef} from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {collection, doc, updateDoc, onSnapshot} from 'firebase/firestore';
@@ -91,12 +91,21 @@ export default function DocEditor({database}) {
         }
     };
 
+    let navigate = useNavigate();
+
+
+    const handleHomeButton = () => {
+        navigate("/home");
+    }
 
 
 // RETURN
     return (
         <div>
             <ToastContainer/>
+            <button className='home' onClick={handleHomeButton}>
+                Home
+            </button>
             <h1>Document Editor</h1>
             <ReactQuill
                 value={docContent}

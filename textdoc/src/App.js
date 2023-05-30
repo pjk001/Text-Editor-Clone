@@ -11,9 +11,10 @@ function App() {
   
   return (
     <Routes>
-      <Route path="/home" element={<Home database={database} />} />
+      <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/home" element={<Home database={database} />} />
       <Route path="/documents/:id" element={<DocEditor database={database}/>} />
     </Routes>
   );
