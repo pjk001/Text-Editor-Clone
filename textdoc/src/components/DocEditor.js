@@ -1,20 +1,23 @@
-import {useState, useEffect, React, useRef} from 'react';
+import { useState, useEffect, React, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {collection, doc, updateDoc, onSnapshot} from 'firebase/firestore';
+import { collection, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './custom-quill.css';
 
 
-export default function DocEditor({database}) {
+export default function DocEditor({ database }) {
     const isMounted = useRef();
     const params = useParams();
-    const collectionRef = collection(database, 'docInfo');
+    const collectionRef = collection(database, 'docInfo'); // I need to change 'docinfo' to be the user's name! like UID!
+    // I think i need to connect authentication to the firebase database
 
     const [docContent, setDocContent] = useState('');
+    const [docTitle, setTitle] = useState('');
     const [savePending, setSavePending] = useState(false);
+    const unsubscribeRef = useRef(null);
 
     const getQuillData = (value) => {
         setDocContent(value);
@@ -23,21 +26,45 @@ export default function DocEditor({database}) {
         }
     }
 
-// LOAD DATA
+    // Function to delete a Document
+    const deleteDocument = () => {
+        deleteDoc(doc(collectionRef, params.id));
+        console.log("Deleting Doc. ID: ", params.id);
+        console.log("Deleting Title: ", docTitle);
+        alert('Deleting Document: ' + docTitle);
+        navigate("/home");
+        console.log("Doc is DELETED");
+
+        if (unsubscribeRef.current) {
+            unsubscribeRef.current();
+        }
+    }
+
+    // LOAD DATA
     const getData = () => {
         console.log("getdata");
         const targetDoc = doc(collectionRef, params.id)
-        onSnapshot(targetDoc, (docs) => {
-            setDocContent(docs.data().body)
-        })
+        const unsubscribe = onSnapshot(targetDoc, (docs) => {
+            setDocContent(docs.data().body);
+            setTitle(docs.data().title);
+        });
+
+        unsubscribeRef.current = unsubscribe;
     }
 
     useEffect(() => {
-        if(isMounted.current){
+        if (isMounted.current) {
             return;
         }
         isMounted.current = true;
         getData()
+
+        // Cleanup function to detach the listener
+        return () => {
+            if (unsubscribeRef.current) {
+                unsubscribeRef.current();
+            }
+        };
     }, [])
 
     // Save data with debounce
@@ -61,10 +88,10 @@ export default function DocEditor({database}) {
                     });
             }, 1000);
         }
-        return () => clearTimeout(debounceTimer);
+        return () => clearTimeout(debounceTimer)
     }, [savePending, docContent]);
 
-// Warn user when leaving with unsaved changes
+    // Warn user when leaving with unsaved changes
     useEffect(() => {
         const handleBeforeUnload = (event) => {
             if (savePending) {
@@ -80,7 +107,7 @@ export default function DocEditor({database}) {
         };
     }, [savePending]);
 
-// Save Message
+    // Save Message
     const showSaveToast = () => {
         if (toast.isActive('saveToast')) {
             // If a toast with the ID 'myToast' exists, update its autoclose duration
@@ -98,11 +125,14 @@ export default function DocEditor({database}) {
         navigate("/home");
     }
 
-
-// RETURN
+    // RETURN
     return (
         <div>
-            <ToastContainer/>
+            <ToastContainer />
+            <button // Creates the Delete button
+                onClick={() => deleteDocument()}
+            > Delete Document
+            </button>
             <button className='home' onClick={handleHomeButton}>
                 Home
             </button>
