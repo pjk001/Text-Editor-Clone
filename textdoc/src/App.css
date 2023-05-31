@@ -69,6 +69,10 @@ body {
   transform: scale(1.05);
 }
 
+.create-doc:active {
+  background-color: #e6c258
+}
+
 .confirmation-option {
   height: 45px;
   width: 100px;
@@ -83,6 +87,7 @@ body {
   text-align: center;
   position:relative; left: -30px;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 30px;
 }
 
 .confirmation-option:hover {
@@ -104,6 +109,7 @@ body {
   position:relative; right: -30px;
   text-align: center;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 30px;
 }
 
 .cancel-option:hover {
@@ -136,8 +142,8 @@ body {
 
 .button-container {
   text-align: center;
-  background-color: #ff9800;
   margin: 30px;
+  margin-top: 40px;
 }
 
 .delete-container {

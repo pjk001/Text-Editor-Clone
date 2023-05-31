@@ -3,6 +3,10 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { useState, useEffect } from 'react';
+
+
+
 
 const style = {
     position: 'absolute',
@@ -25,6 +29,10 @@ export default function ModalComponent({
     deleteDoc,
 }) {
     const handleClose = () => setOpen(false);
+
+    const [isMovingUp, setIsMovingUp] = useState(false);
+
+    
 
     return (
         <div>
@@ -61,9 +69,9 @@ export default function ModalComponent({
                     aria-describedby="modal-modal-description"
                 >
 
-                    <Box sx={style}>
+                    <Box sx={{...style, backgroundColor: 'rgba(255, 255, 255, 0.4)', border: 'none', borderRadius: '12px'}}>
                         <div className="delete-container">
-                            <body className="confirmation-message">
+                            <body className="confirmation-message" style={{ opacity: 0.7, borderRadius: '12px' }}>
                                 Are you sure you want to delete this document?
                             </body>
 
