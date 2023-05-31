@@ -7,6 +7,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './custom-quill.css';
 import Modal from './Modal';
+import jsPDF from 'jspdf';
+import { PDFExport } from 'react-html2pdf';
+import { Preview, print } from 'react-html2pdf';
+import html2pdf from 'html2pdf.js';
 
 
 export default function DocEditor({ database }) {
@@ -102,10 +106,10 @@ export default function DocEditor({ database }) {
     // Warn user when leaving with unsaved changes
     useEffect(() => {
         const handleBeforeUnload = (event) => {
-            if (savePending) {
-                event.preventDefault();
+            // if (savePending) {
+            //     event.preventDefault();
                 event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-            }
+            // }
         };
 
         window.onbeforeunload = handleBeforeUnload;
@@ -150,6 +154,39 @@ export default function DocEditor({ database }) {
             });
     };
 
+
+    // Export as PDF
+    const pdfExportComponent = useRef(null);
+    const exportAsPDF = () => {
+        const options = {
+            filename: 'document.pdf',
+            html2canvas: { scale: 1 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        };
+
+        const style = `
+        <style>
+            body {
+            font-family: Helvetica, sans-serif;
+            font-size: 14px;
+            color: #333;
+            padding: 1in;
+            }
+        </style>
+        `;
+
+        const content = `
+        <html>
+            <head>${style}</head>
+            <body>${docContent}</body>
+        </html>
+        `;
+
+        html2pdf().set(options).from(content).save();
+        console.log("Finished pdf export function");
+    };
+
+
     // RETURN
     return (
         <div>
@@ -161,18 +198,29 @@ export default function DocEditor({ database }) {
                     onChange={(e) => titleChange(e.target.value)}
                     class="doc-title-input"
                 />
-                <button className="delete-doc" onClick={handleOpen}>
+                <button 
+                    className="editor-menu-button" onClick={handleOpen}
+                    >
                     Delete Document
                 </button>
-                <button className="home" onClick={handleHomeButton}>
+                <button 
+                    className="editor-menu-button" onClick={handleHomeButton}
+                    >
                     Home
                 </button>
+                {docContent && (<button 
+                    className="editor-menu-button"
+                    onClick={exportAsPDF}
+                    >
+                        Export as PDF
+                </button>
+                )}
+
             </div>
 
-            <ReactQuill
-                value={docContent}
-                onChange={getQuillData}
-            />
+            <div id="doc-content">
+                <ReactQuill value={docContent} onChange={getQuillData} />
+            </div>
 
             <Modal
                 open={open}

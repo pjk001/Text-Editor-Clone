@@ -64,7 +64,7 @@
   padding-bottom: 0.5rem;
 }
 
-.home {
+.editor-menu-button {
   background-color: #ff9800;
   border: none;
   color: white;
@@ -80,17 +80,6 @@
   background-color: #ffc107;
 }  
 
-.delete-doc {
-  background-color: #ff9800;
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-left: 1.5rem;
-}
 
 .delete-doc:hover {
   background-color: #ffc107;
