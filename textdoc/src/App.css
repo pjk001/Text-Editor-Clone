@@ -69,6 +69,55 @@ body {
   transform: scale(1.05);
 }
 
+.confirmation-option {
+  height: 45px;
+  width: 100px;
+  background-color: #ff9800;
+  border: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  position:relative; left: -30px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.confirmation-option:hover {
+  background-color: #ffc107;
+  transform: scale(1.05);
+}
+
+.cancel-option {
+  height: 45px;
+  width: 100px;
+  background-color: #ff9800;
+  border: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  position:relative; right: -30px;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.cancel-option:hover {
+  background-color: #ffc107;
+  transform: scale(1.05);
+}
+
+.confirmation-message {
+  font-size: 18px;
+  color: black;
+  background-color: none;
+  padding: 15px;
+}
+
 .add-input {
   width: 95%;
   height: 40px;
@@ -87,9 +136,14 @@ body {
 
 .button-container {
   text-align: center;
+  background-color: #ff9800;
   margin: 30px;
 }
 
+.delete-container {
+  text-align: center;
+  margin: 35px;
+}
 .doc-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

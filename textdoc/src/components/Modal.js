@@ -22,34 +22,61 @@ export default function ModalComponent({
     title,
     setTitle,
     createDoc,
+    deleteDoc,
 }) {
     const handleClose = () => setOpen(false);
 
     return (
         <div>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <input
-                        placeholder='Add the Title'
-                        className='add-input'
-                        onChange={(event) => setTitle(event.target.value)}
-                        value={title}
-                    />
-                    <div className='button-container'>
-                        <button
-                            className='create-doc'
-                            onClick={createDoc}
-                        >
-                            Add
-                        </button>
-                    </div>
-                </Box>
-            </Modal>
+            {createDoc && (
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <input
+                            placeholder="Add the Title"
+                            className="add-input"
+                            onChange={(event) => setTitle(event.target.value)}
+                            value={title}
+                        />
+                        <div className="button-container">
+                            <button className="create-doc" onClick={createDoc}>
+                                Add
+                            </button>
+                        </div>
+                    </Box>
+                </Modal>
+            )}
+
+
+
+            {deleteDoc && (
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+
+                    <Box sx={style}>
+                        <div className="delete-container">
+                            <body className="confirmation-message">
+                                Are you sure you want to delete this document?
+                            </body>
+
+                            <button className="confirmation-option" onClick={deleteDoc}>
+                                Yes
+                            </button>
+                            <button className="cancel-option" onClick={handleClose}>
+                                No
+                            </button>
+                        </div>
+                    </Box>
+                </Modal>
+            )}
         </div>
     );
 }

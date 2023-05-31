@@ -128,6 +128,7 @@ export default function Home({database}) {
                 title={title}
                 setTitle={setTitle}
                 createDoc={createDoc}
+                deleteDoc={null}
             />            
 
         </div>

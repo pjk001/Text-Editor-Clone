@@ -6,6 +6,7 @@ import { collection, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/fire
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './custom-quill.css';
+import Modal from './Modal';
 
 
 export default function DocEditor({ database }) {
@@ -18,6 +19,12 @@ export default function DocEditor({ database }) {
     const [docTitle, setTitle] = useState('');
     const [savePending, setSavePending] = useState(false);
     const unsubscribeRef = useRef(null);
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const [open, setOpen] = useState(false);
+
+
 
     const getQuillData = (value) => {
         setDocContent(value);
@@ -130,9 +137,13 @@ export default function DocEditor({ database }) {
         <div>
             <ToastContainer />
             <button // Creates the Delete button
-                onClick={() => deleteDocument()}
-            > Delete Document
+                className='delete-doc'
+                onClick={handleOpen}
+            >
+                Delete Document
             </button>
+
+
             <button className='home' onClick={handleHomeButton}>
                 Home
             </button>
@@ -140,6 +151,15 @@ export default function DocEditor({ database }) {
             <ReactQuill
                 value={docContent}
                 onChange={getQuillData}
+            />
+
+            <Modal
+                open={open}
+                setOpen={setOpen}
+                title={null}
+                setTitle={null}
+                createDoc={null}
+                deleteDoc={deleteDocument}
             />
         </div>
     )
