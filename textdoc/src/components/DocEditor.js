@@ -39,7 +39,8 @@ export default function DocEditor({ database }) {
         console.log("Deleting Doc. ID: ", params.id);
         console.log("Deleting Title: ", docTitle);
         toast.error('Deleting Document: ' + docTitle);
-        navigate("/home");
+        const notification = 'Document \"'+ docTitle +'\" Deleted';
+        navigate(`/home?notification=${encodeURIComponent(notification)}`);
         console.log("Doc is DELETED");
 
         if (unsubscribeRef.current) {
@@ -127,11 +128,12 @@ export default function DocEditor({ database }) {
 
     let navigate = useNavigate();
 
-
+    // Home Button
     const handleHomeButton = () => {
         navigate("/home");
     }
 
+    // Changing the title
     const titleChange = (newTitle) => {
         setTitle(newTitle);
         const targetDoc = doc(collectionRef, params.id);

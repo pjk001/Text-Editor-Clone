@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Modal from './Modal';
 import { ToastContainer, toast } from 'react-toastify';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { create } from '@mui/material/styles/createTransitions';
 // import {user} from '../user.js'
 
@@ -88,6 +88,17 @@ export default function Home({database}) {
             console.log(error);
         });
     }
+
+    // Notifications from other pages
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const notification = searchParams.get('notification');
+
+    useEffect(() => {
+        if (notification) {
+            toast.success(notification);
+        }
+    }, [notification]);
 
     return (
         <div className='docs-main'>
