@@ -38,7 +38,7 @@ export default function DocEditor({ database }) {
         deleteDoc(doc(collectionRef, params.id));
         console.log("Deleting Doc. ID: ", params.id);
         console.log("Deleting Title: ", docTitle);
-        alert('Deleting Document: ' + docTitle);
+        toast.error('Deleting Document: ' + docTitle);
         navigate("/home");
         console.log("Doc is DELETED");
 
@@ -132,22 +132,41 @@ export default function DocEditor({ database }) {
         navigate("/home");
     }
 
+    const titleChange = (newTitle) => {
+        setTitle(newTitle);
+        const targetDoc = doc(collectionRef, params.id);
+        updateDoc(targetDoc, {
+            title: newTitle,
+        })
+            .then(() => {
+                showSaveToast();
+            })
+            .catch(() => {
+                toast.error('Unable To Update Title', {
+                    autoClose: 2000,
+                });
+            });
+    };
+
     // RETURN
     return (
         <div>
             <ToastContainer />
-            <button // Creates the Delete button
-                className='delete-doc'
-                onClick={handleOpen}
-            >
-                Delete Document
-            </button>
+            <div className="doc-heading">
+                <input
+                    type="text"
+                    value={docTitle}
+                    onChange={(e) => titleChange(e.target.value)}
+                    class="doc-title-input"
+                />
+                <button className="delete-doc" onClick={handleOpen}>
+                    Delete Document
+                </button>
+                <button className="home" onClick={handleHomeButton}>
+                    Home
+                </button>
+            </div>
 
-
-            <button className='home' onClick={handleHomeButton}>
-                Home
-            </button>
-            <h1>Document Editor</h1>
             <ReactQuill
                 value={docContent}
                 onChange={getQuillData}

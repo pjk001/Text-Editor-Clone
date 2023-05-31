@@ -3,6 +3,8 @@ import "./login-signup.css"
 import { auth, app } from "../firebaseConfig"
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -27,13 +29,16 @@ export default function SignUp() {
     console.log(userCredential);
   })
   .catch((error) => {
-    alert(error);
+    toast.error(error, {
+      autoClose: 2000,
+    });
   });
 }
 
   return (
     <>
       <div className="vertical-container">
+        <ToastContainer />
       <section class="box-container">
       <div class="heading">
         <h1 class="text text-large">Create an Account</h1>

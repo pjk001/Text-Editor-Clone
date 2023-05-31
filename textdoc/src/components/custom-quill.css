@@ -54,10 +54,17 @@
   background-color: rgb(172, 218, 253);
 }
 
+.doc-heading {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-left: 1rem;
+  padding-top: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 0.5rem;
+}
+
 .home {
-  position: absolute;
-  top: 20px;
-  right: 20px;
   background-color: #ff9800;
   border: none;
   color: white;
@@ -66,6 +73,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-left: 1.5rem;
 }
 
 .home:hover {
@@ -73,9 +81,6 @@
 }  
 
 .delete-doc {
-  position: absolute;
-  top: 20px;
-  right: 120px;
   background-color: #ff9800;
   border: none;
   color: white;
@@ -84,9 +89,17 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-left: 1.5rem;
 }
 
 .delete-doc:hover {
   background-color: #ffc107;
 }
 
+.doc-title-input {
+  font-size: 24px;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}

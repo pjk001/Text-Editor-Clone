@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Modal from './Modal';
+import { ToastContainer, toast } from 'react-toastify';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { create } from '@mui/material/styles/createTransitions';
@@ -46,11 +47,11 @@ export default function Home({database}) {
                 roles
             })
             .then(() => {
-                alert('Document created')
+                toast.success('Document Created');
                 handleClose()
             })
             .catch(() => {
-                alert('Cannot create document')
+                toast.error('Cannot Create Document');
             })
         }
     }
@@ -90,6 +91,7 @@ export default function Home({database}) {
 
     return (
         <div className='docs-main'>
+            <ToastContainer />
             <h1>Docs Clone</h1>
 
             <button className='sign-out' onClick={handleSignOut}>
