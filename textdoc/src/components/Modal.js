@@ -26,7 +26,6 @@ export default function ModalComponent({
     setTitle,
     createDoc,
     deleteDoc,
-    share,
 }) {
     const handleClose = () => setOpen(false);
 
@@ -79,32 +78,6 @@ export default function ModalComponent({
                             </button>
                             <button className="cancel-option" onClick={handleClose}>
                                 No
-                            </button>
-                        </div>
-                    </Box>
-                </Modal>
-            )}
-
-            {share && (
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style}>
-                        <div className="shared-users">
-                            Users
-                        </div>
-                        {/* <input
-                            placeholder="Share with"
-                            className="user-input"
-                            onChange={(event) => setTitle(event.target.value)}
-                            value={title}
-                        /> */}
-                        <div className="button-container">
-                            <button className="share-user" onClick={share}>
-                                Add User
                             </button>
                         </div>
                     </Box>

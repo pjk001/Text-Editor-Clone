@@ -12,6 +12,91 @@ import { PDFExport } from 'react-html2pdf';
 import { Preview, print } from 'react-html2pdf';
 import html2pdf from 'html2pdf.js';
 
+import PropTypes from 'prop-types';
+import Avatar from '@mui/material/Avatar';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import PersonIcon from '@mui/icons-material/Person';
+import AddIcon from '@mui/icons-material/Add';
+import { blue } from '@mui/material/colors';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+
+const emails = ['username@gmail.com', 'user02@gmail.com'];
+
+function ShareDialog(props) {
+    const { onClose, open, emailsIn } = props;
+  
+    const handleClose = () => {
+      onClose();
+    };
+  
+    const handleListItemClick = () => {
+      onClose();
+    };
+  
+    return (
+      <Dialog onClose={handleClose} open={open}>
+        <DialogTitle>
+            Shared Users
+            {onClose ? (
+                <IconButton
+                aria-label="close"
+                onClick={onClose}
+                sx={{
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    color: (theme) => theme.palette.grey[500],
+                }}
+                >
+                <CloseIcon />
+                </IconButton>
+            ) : null}
+        </DialogTitle>
+        
+        <List sx={{ pt: 0 }}>
+          {emailsIn.map((email) => (
+            <ListItem disableGutters>
+              <ListItemButton onClick={() => handleListItemClick(email)} key={email}>
+                <ListItemAvatar>
+                  <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
+                    <PersonIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={email} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+  
+          <ListItem disableGutters>
+            <ListItemButton
+              autoFocus
+              onClick={() => handleListItemClick('addAccount')}
+            >
+              <ListItemAvatar>
+                <Avatar>
+                  <AddIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary="Add user" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Dialog>
+    );
+  }
+  
+  ShareDialog.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    emailsIn: PropTypes.array.isRequired,
+  };
 
 export default function DocEditor({ database }) {
     const isMounted = useRef();
@@ -21,6 +106,7 @@ export default function DocEditor({ database }) {
 
     const [docContent, setDocContent] = useState('');
     const [docTitle, setTitle] = useState('');
+    const [shareUsers, setShareUsers] = useState('');
     const [savePending, setSavePending] = useState(false);
     const unsubscribeRef = useRef(null);
 
@@ -61,6 +147,7 @@ export default function DocEditor({ database }) {
         const unsubscribe = onSnapshot(targetDoc, (docs) => {
             setDocContent(docs.data().body);
             setTitle(docs.data().title);
+            setShareUsers(docs.data().roles);
         });
 
         unsubscribeRef.current = unsubscribe;
@@ -242,17 +329,12 @@ export default function DocEditor({ database }) {
                 setTitle={null}
                 createDoc={null}
                 deleteDoc={deleteDocument}
-                share={null}
             />
 
-            <Modal
+            <ShareDialog
                 open={shareOpen}
-                setOpen={setShareOpen}
-                title={null}
-                setTitle={null}
-                createDoc={null}
-                deleteDoc={null}
-                share={handleShare}
+                onClose={handleShareClose}
+                emailsIn={emails}
             />
         </div>
     )

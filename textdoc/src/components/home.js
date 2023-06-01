@@ -43,8 +43,7 @@ export default function Home({database}) {
         if(user){
             addDoc(collectionRef, {
                 title: title,
-
-                roles
+                roles: roles,
             })
             .then(() => {
                 toast.success('Document Created');
@@ -142,7 +141,6 @@ export default function Home({database}) {
                 setTitle={setTitle}
                 createDoc={createDoc}
                 deleteDoc={null}
-                share={null}
             />            
 
         </div>
