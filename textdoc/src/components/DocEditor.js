@@ -28,7 +28,9 @@ export default function DocEditor({ database }) {
     const handleClose = () => setOpen(false);
     const [open, setOpen] = useState(false);
 
-
+    const handleShareOpen = () => setShareOpen(true);
+    const handleShareClose = () => setShareOpen(false);
+    const [shareOpen, setShareOpen] = useState(false);
 
     const getQuillData = (value) => {
         setDocContent(value);
@@ -135,7 +137,7 @@ export default function DocEditor({ database }) {
     // Home Button
     const handleHomeButton = () => {
         navigate("/home");
-    }
+    };
 
     // Changing the title
     const titleChange = (newTitle) => {
@@ -186,6 +188,10 @@ export default function DocEditor({ database }) {
         console.log("Finished pdf export function");
     };
 
+    const handleShare = () => {
+        
+    };
+
 
     // RETURN
     return (
@@ -203,6 +209,16 @@ export default function DocEditor({ database }) {
                     className="editor-menu-button" onClick={handleOpen}
                     >
                     Delete Document
+                </button>
+                <button 
+                    className="editor-menu-button" onClick={handleHomeButton}
+                    >
+                    Home
+                </button>
+                <button 
+                    className="editor-menu-button" onClick={handleShareOpen}
+                    >
+                    Share
                 </button>
                 {docContent && (<button 
                     className="editor-menu-button"
@@ -231,6 +247,17 @@ export default function DocEditor({ database }) {
                 setTitle={null}
                 createDoc={null}
                 deleteDoc={deleteDocument}
+                share={null}
+            />
+
+            <Modal
+                open={shareOpen}
+                setOpen={setShareOpen}
+                title={null}
+                setTitle={null}
+                createDoc={null}
+                deleteDoc={null}
+                share={handleShare}
             />
         </div>
     )
