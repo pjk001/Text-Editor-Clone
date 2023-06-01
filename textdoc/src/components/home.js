@@ -103,7 +103,7 @@ export default function Home({database}) {
     return (
         <div className='docs-main'>
             <ToastContainer />
-            <h1>Docs Clone</h1>
+            <h1>Text Editor</h1>
 
             <button className='sign-out' onClick={handleSignOut}>
                 Sign Out

@@ -54,7 +54,7 @@ body {
   height: 40px;
   width: 200px;
   background-color: #ff9800;
-  border: none;
+  border: solid;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
@@ -249,7 +249,7 @@ body {
   top: 20px;
   right: 20px;
   background-color: #ff9800;
-  border: none;
+  border: solid;
   color: white;
   padding: 8px 16px;
   font-size: 16px;

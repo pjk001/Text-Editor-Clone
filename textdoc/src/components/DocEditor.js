@@ -198,15 +198,11 @@ export default function DocEditor({ database }) {
                     onChange={(e) => titleChange(e.target.value)}
                     class="doc-title-input"
                 />
+                <div className="options-container">
                 <button 
                     className="editor-menu-button" onClick={handleOpen}
                     >
                     Delete Document
-                </button>
-                <button 
-                    className="editor-menu-button" onClick={handleHomeButton}
-                    >
-                    Home
                 </button>
                 {docContent && (<button 
                     className="editor-menu-button"
@@ -215,6 +211,12 @@ export default function DocEditor({ database }) {
                         Export as PDF
                 </button>
                 )}
+                 <button 
+                    className="editor-menu-button" onClick={handleHomeButton}
+                    >
+                    Home
+                </button>
+                </div>
 
             </div>
 
