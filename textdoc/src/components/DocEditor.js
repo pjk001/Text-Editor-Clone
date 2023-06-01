@@ -211,11 +211,6 @@ export default function DocEditor({ database }) {
                     Delete Document
                 </button>
                 <button 
-                    className="editor-menu-button" onClick={handleHomeButton}
-                    >
-                    Home
-                </button>
-                <button 
                     className="editor-menu-button" onClick={handleShareOpen}
                     >
                     Share
