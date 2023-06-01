@@ -26,8 +26,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { blue } from '@mui/material/colors';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import DialogContent from '@mui/material/DialogContent';
 
-const emails = ['username@gmail.com', 'user02@gmail.com'];
+const emails = ['username@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com'];
 
 function ShareDialog(props) {
     const { onClose, open, emailsIn } = props;
@@ -60,20 +61,24 @@ function ShareDialog(props) {
             ) : null}
         </DialogTitle>
         
+        
+        <DialogContent dividers={true}>
         <List sx={{ pt: 0 }}>
-          {emailsIn.map((email) => (
-            <ListItem disableGutters>
-              <ListItemButton onClick={() => handleListItemClick(email)} key={email}>
-                <ListItemAvatar>
-                  <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
-                    <PersonIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={email} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-  
+            {emailsIn.map((email) => (
+                <ListItem disableGutters>
+                <ListItemButton onClick={() => handleListItemClick(email)} key={email}>
+                    <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
+                        <PersonIcon />
+                    </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={email} />
+                </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+        </DialogContent>
+        <List sx={{ pt: 0 }}>
           <ListItem disableGutters>
             <ListItemButton
               autoFocus
