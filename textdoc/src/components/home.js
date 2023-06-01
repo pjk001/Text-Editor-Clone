@@ -142,6 +142,7 @@ export default function Home({database}) {
                 setTitle={setTitle}
                 createDoc={createDoc}
                 deleteDoc={null}
+                share={null}
             />            
 
         </div>
