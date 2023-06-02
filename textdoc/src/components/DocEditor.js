@@ -30,8 +30,9 @@ import DialogContent from '@mui/material/DialogContent';
 
 const emails = ['username@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com'];
 
+
 function ShareDialog(props) {
-    const { onClose, open, emailsIn } = props;
+    const { onClose, open, emailsIn, user, setUser } = props;
   
     const handleClose = () => {
       onClose();
@@ -39,6 +40,16 @@ function ShareDialog(props) {
   
     const handleListItemClick = () => {
       onClose();
+    };
+
+    const inUser = (value) => {
+        setUser(value);
+        
+    };
+
+    const handleAdd = () => {
+        emailsIn.push(user);
+        setUser('');
     };
   
     return (
@@ -66,7 +77,7 @@ function ShareDialog(props) {
         <List sx={{ pt: 0 }}>
             {emailsIn.map((email) => (
                 <ListItem disableGutters>
-                <ListItemButton onClick={() => handleListItemClick(email)} key={email}>
+                <ListItemButton>
                     <ListItemAvatar>
                     <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
                         <PersonIcon />
@@ -82,14 +93,19 @@ function ShareDialog(props) {
           <ListItem disableGutters>
             <ListItemButton
               autoFocus
-              onClick={() => handleListItemClick('addAccount')}
             >
-              <ListItemAvatar>
+              <ListItemAvatar onClick={handleAdd}>
                 <Avatar>
                   <AddIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary="Add user" />
+              <input
+                    placeholder="Add User"
+                    type="text"
+                    value={user}
+                    onChange={(e) => inUser(e.target.value)}
+                    class="share-input"
+                />
             </ListItemButton>
           </ListItem>
         </List>
@@ -122,6 +138,7 @@ export default function DocEditor({ database }) {
     const handleShareOpen = () => setShareOpen(true);
     const handleShareClose = () => setShareOpen(false);
     const [shareOpen, setShareOpen] = useState(false);
+    const [user, setUser] = useState('');
 
     const getQuillData = (value) => {
         setDocContent(value);
@@ -338,6 +355,8 @@ export default function DocEditor({ database }) {
 
             <ShareDialog
                 open={shareOpen}
+                user = {user}
+                setUser = {setUser}
                 onClose={handleShareClose}
                 emailsIn={emails}
             />
