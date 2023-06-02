@@ -27,13 +27,20 @@ import { blue } from '@mui/material/colors';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import DialogContent from '@mui/material/DialogContent';
-
-const emails = ['username@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com', 'user02@gmail.com'];
-
+import {transemail, transuid} from '../sharing.js'
 
 function ShareDialog(props) {
     const { onClose, open, emailsIn, user, setUser } = props;
-  
+    console.log(emailsIn);
+    var result = [];
+    for (const key in emailsIn){
+        // console.log("For loop started");
+        // transuid(key).then((email) => result.push(email.concat(": ", emailsIn[key])))
+        const email = String(transuid(key));
+        result.push(email.concat(": ", emailsIn[key]))
+    }
+    console.log(result);
+    
     const handleClose = () => {
       onClose();
     };
@@ -48,7 +55,8 @@ function ShareDialog(props) {
     };
 
     const handleAdd = () => {
-        emailsIn.push(user);
+        const new_email = transemail(user);
+        emailsIn[new_email] = "writer";
         setUser('');
     };
   
@@ -75,7 +83,7 @@ function ShareDialog(props) {
         
         <DialogContent dividers={true}>
         <List sx={{ pt: 0 }}>
-            {emailsIn.map((email) => (
+            {result.map((email) => (
                 <ListItem disableGutters>
                 <ListItemButton>
                     <ListItemAvatar>
@@ -358,7 +366,7 @@ export default function DocEditor({ database }) {
                 user = {user}
                 setUser = {setUser}
                 onClose={handleShareClose}
-                emailsIn={emails}
+                emailsIn={shareUsers}
             />
         </div>
     )
