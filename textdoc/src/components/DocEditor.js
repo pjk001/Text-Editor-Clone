@@ -57,6 +57,7 @@ function ShareDialog(props) {
     const handleAdd = () => {
         const new_email = transemail(user);
         emailsIn[new_email] = "writer";
+        setShareUsers(emailsIn);
         setUser('');
     };
   
