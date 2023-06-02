@@ -34,7 +34,7 @@ export default function Home({database}) {
     const [docsData, setDocsData] = useState([]);
     let navigate = useNavigate();
     var roles = {};
-    roles[user.email] = "owner";
+    roles[user.uid] = "owner";
 
     const createDoc = () => {
 //The roles field contains the data on who can access and edit it.
