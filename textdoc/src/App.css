@@ -229,14 +229,14 @@ body {
   transition: color 0.3s ease;
 }
 
-.doc-grid-child:hover .doc-date {
+/* .doc-grid-child:hover .doc-date {
   color: #ff9800;
-}
+} */
 
 .doc-grid-child .doc-title,
 .doc-grid-child .doc-description,
 .doc-grid-child .doc-date {
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.3s ease;
 }
 

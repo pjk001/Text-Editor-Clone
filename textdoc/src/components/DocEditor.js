@@ -1,5 +1,6 @@
 import { useState, useEffect, React, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import ReactDOM from "react-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
@@ -129,6 +130,9 @@ export default function DocEditor({ database }) {
     const params = useParams();
     const collectionRef = collection(database, userID);
 
+    const [doclastUpdatedDate, setLastUpdatedDate] = useState('');
+    const [doclastUpdatedTime, setLastUpdatedTime] = useState('');
+
     const [docContent, setDocContent] = useState('');
     const [docTitle, setTitle] = useState('');
     const [shareUsers, setShareUsers] = useState('');
@@ -149,6 +153,7 @@ export default function DocEditor({ database }) {
         if (!savePending) {
             setSavePending(true);
         }
+        // lastUpdatedChange();
     }
 
     // Function to delete a Document
@@ -166,6 +171,24 @@ export default function DocEditor({ database }) {
         }
     }
 
+    
+    // Function to create the string for the last updated time
+    const getTheLastUpdatedString = () => {
+        if ((doclastUpdatedDate == "") && (doclastUpdatedTime == "")) {
+            return "";
+        }
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          };
+        
+        const date = new Date(doclastUpdatedDate).toLocaleDateString(undefined, options);
+        const updateString = `Last updated on ${date} at ${doclastUpdatedTime}`;
+        console.log(updateString);
+        return updateString;
+    }
+    
     // LOAD DATA
     const getData = () => {
         console.log("getdata");
@@ -174,7 +197,11 @@ export default function DocEditor({ database }) {
             setDocContent(docs.data().body);
             setTitle(docs.data().title);
             setShareUsers(docs.data().roles);
+            setLastUpdatedDate(docs.data().lastUpdatedDate);
+            setLastUpdatedTime(docs.data().lastUpdatedTime);
         });
+        console.log("the last updated day: ", doclastUpdatedDate);
+        console.log("the last updated time: ", doclastUpdatedTime);
 
         unsubscribeRef.current = unsubscribe;
     }
@@ -200,8 +227,13 @@ export default function DocEditor({ database }) {
         if (savePending) {
             debounceTimer = setTimeout(() => {
                 const targetDoc = doc(collectionRef, params.id);
+                const currDate = new Date().toLocaleDateString();
+                const currTime = new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+
                 updateDoc(targetDoc, {
                     body: docContent,
+                    lastUpdatedDate: currDate,
+                    lastUpdatedTime: currTime,
                 })
                     .then(() => {
                         showSaveToast();
@@ -213,6 +245,8 @@ export default function DocEditor({ database }) {
                         });
                         setSavePending(false);
                     });
+                setLastUpdatedDate(currDate);
+                setLastUpdatedTime(currTime);
             }, 1000);
         }
         return () => clearTimeout(debounceTimer)
@@ -269,7 +303,6 @@ export default function DocEditor({ database }) {
             });
     };
 
-
     // Export as PDF
     const pdfExportComponent = useRef(null);
     const exportAsPDF = () => {
@@ -305,7 +338,6 @@ export default function DocEditor({ database }) {
         
     };
 
-
     // RETURN
     return (
         <div>
@@ -317,6 +349,7 @@ export default function DocEditor({ database }) {
                     onChange={(e) => titleChange(e.target.value)}
                     class="doc-title-input"
                 />
+                <span className="last-update-time">{getTheLastUpdatedString()}</span>
                 <div className="options-container">
                 <button 
                     className="editor-menu-button" onClick={handleOpen}

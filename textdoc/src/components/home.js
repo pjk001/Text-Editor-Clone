@@ -46,6 +46,8 @@ export default function Home({database}) {
         if(user){
             addDoc(collectionRef, {
                 title: title,
+                lastUpdatedDate: "",
+                lastUpdatedTime: "",
                 roles: roles,
             })
             .then(() => {
@@ -91,6 +93,9 @@ export default function Home({database}) {
         });
     }
 
+    const docWithNoEdits = () => {
+
+    }
     // Notifications from other pages
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
@@ -128,7 +133,7 @@ export default function Home({database}) {
                             onClick={() => getID(doc.id)}>
                             <p>{doc.title}</p>
                             <p className='doc-description'>{doc.description}</p>
-                            <p className='doc-date'>Last Updated: {doc.lastUpdated}</p>
+                            <p className='doc-date'> {doc.lastUpdatedDate !== '' ? `Last Updated: ${doc.lastUpdatedDate}` : 'No Edits'} </p>
                             <div className='doc-content'>
                                 <p>{doc.textSnippet}</p>
                             </div>

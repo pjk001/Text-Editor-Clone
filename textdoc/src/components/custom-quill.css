@@ -64,6 +64,14 @@
   padding-bottom: 0.5rem;
 }
 
+.last-update-time {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  display: flex;
+  opacity: 0.75;
+}
+
 .editor-menu-button {
   background-color: #ff9800;
   border: solid;
