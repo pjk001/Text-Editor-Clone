@@ -16,7 +16,7 @@ export default function Home({database}) {
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/auth.user
     const uid = user.uid;
-    console.log(uid)
+    console.log("here is the 1st user uid: ", uid)
     // ...
     } else {
     // User is signed out
@@ -26,11 +26,14 @@ export default function Home({database}) {
     //Sets user to be the currently signed in user.
     //If nobody is signed in, it's set to.
     const user = auth.currentUser;
+    const userID = user.uid;
+    console.log("here is the user's userID: ", userID);
+
     const [open, setOpen] = React.useState(false);
     const [title, setTitle] = useState('')
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const collectionRef = collection(database, 'docInfo')
+    const collectionRef = collection(database, userID);
     const [docsData, setDocsData] = useState([]);
     let navigate = useNavigate();
     var roles = {};

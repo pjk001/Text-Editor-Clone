@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './custom-quill.css';
@@ -120,10 +121,13 @@ function ShareDialog(props) {
   };
 
 export default function DocEditor({ database }) {
+    const auth = getAuth();
+    const userID = auth.currentUser.uid;
+    console.log("here is the user's userID: ", userID);
+
     const isMounted = useRef();
     const params = useParams();
-    const collectionRef = collection(database, 'docInfo'); // I need to change 'docinfo' to be the user's name! like UID!
-    // I think i need to connect authentication to the firebase database
+    const collectionRef = collection(database, userID);
 
     const [docContent, setDocContent] = useState('');
     const [docTitle, setTitle] = useState('');
