@@ -33,7 +33,8 @@ export default function Home({database}) {
     const [title, setTitle] = useState('')
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const collectionRef = collection(database, userID);
+    const collectionRef = collection(database, 'docInfo')
+    // const collectionRef = collection(database, userID);
     const [docsData, setDocsData] = useState([]);
     let navigate = useNavigate();
     var roles = {};

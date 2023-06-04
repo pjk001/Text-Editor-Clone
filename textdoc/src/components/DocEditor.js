@@ -128,7 +128,9 @@ export default function DocEditor({ database }) {
 
     const isMounted = useRef();
     const params = useParams();
-    const collectionRef = collection(database, userID);
+    // const collectionRef = collection(database, userID);
+    const collectionRef = collection(database, 'docInfo');
+
 
     const [doclastUpdatedDate, setLastUpdatedDate] = useState('');
     const [doclastUpdatedTime, setLastUpdatedTime] = useState('');
