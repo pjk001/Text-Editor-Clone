@@ -215,6 +215,7 @@ export default function DocEditor({ database }) {
         console.log("the last updated day: ", doclastUpdatedDate);
         console.log("the last updated time: ", doclastUpdatedTime);
 
+        console.log(doc.docContent);
         unsubscribeRef.current = unsubscribe;
     }
 
@@ -246,6 +247,7 @@ export default function DocEditor({ database }) {
                     body: docContent,
                     lastUpdatedDate: currDate,
                     lastUpdatedTime: currTime,
+                    docContent: docContent
                 })
                     .then(() => {
                         showSaveToast();

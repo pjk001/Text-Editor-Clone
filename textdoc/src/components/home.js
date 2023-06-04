@@ -133,7 +133,7 @@ export default function Home({database}) {
                             className='doc-grid-child' 
                             onClick={() => getID(doc.id)}>
                             <p>{doc.title}</p>
-                            <p className='doc-description'>{doc.description}</p>
+                            <div dangerouslySetInnerHTML={{ __html: doc.docContent }} style={{ color: 'white', fontWeight: 'bold' }} />
                             <p className='doc-date'> {doc.lastUpdatedDate !== '' ? `Last Updated: ${doc.lastUpdatedDate}` : 'No Edits'} </p>
                             <div className='doc-content'>
                                 <p>{doc.textSnippet}</p>
