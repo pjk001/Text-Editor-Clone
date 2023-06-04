@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {AddUser} from '../sharing.js';
+import { getAuth } from "firebase/auth";
 
 export default function Login() {
 
@@ -27,7 +29,11 @@ export default function Login() {
 
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
+      
       navigate("/home");
+      // console.log("function going to call");
+      AddUser(userCredential.user);
+      // const auth = getAuth();
     console.log(userCredential);
   })
   .catch((error) => {

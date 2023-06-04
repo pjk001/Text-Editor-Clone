@@ -26,6 +26,7 @@ export default function SignUp() {
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
     navigate("/login");
+    AddUser(userCredential.user);
     console.log(userCredential);
   })
   .catch((error) => {
