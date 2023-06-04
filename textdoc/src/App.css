@@ -284,3 +284,47 @@ body {
 .sign-out:hover {
   background-color: #ffc107;
 }  
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-radius: 24px
+}
+
+.doc-search-input {
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.4);
+    display: flex;
+    z-index: 2;
+    padding-left: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    box-shadow: 0px 3px 8px rgba(73, 73, 73, 0.8);
+    width: 350px;
+    margin-bottom: 20px;
+}
+
+.doc-search-input:focus {
+  border: 1.5px solid rgb(39, 122, 170);
+  background-color: rgba(255, 255, 255, 0.35);
+  animation: glow 1.5s infinite;
+}
+
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.filtering {
+  animation: fade-in 0.5s ease-in;
+}

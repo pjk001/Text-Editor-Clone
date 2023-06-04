@@ -20,6 +20,13 @@ export default function SignUp() {
     setPassword(event.target.value);
   }
 
+
+  //don't know who was working on AddUser but it needs to be finished...
+  const AddUser = (user) => {
+    //not defined yet
+    console.log("User added:", user);
+  };
+
   const signUp = (event) => {
     event.preventDefault();
 

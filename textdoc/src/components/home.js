@@ -29,13 +29,39 @@ export default function Home({database}) {
     const userID = user.uid;
     console.log("here is the user's userID: ", userID);
 
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredDocsData, setFilteredDocsData] = useState([]);
+    const [docsData, setDocsData] = useState([]);
+    const [isFiltering, setIsFiltering] = useState(false);
+
+    const handleSearch = () => {
+        const filteredData = docsData.filter((doc) => {
+          const titleWithoutSpaces = doc.title.replace(/\s/g, '');
+          const searchQueryWithoutSpaces = searchQuery.replace(/\s/g, '');
+      
+          return titleWithoutSpaces.toLowerCase().includes(searchQueryWithoutSpaces.toLowerCase());
+        });
+      
+        setIsFiltering(true); // Start the animation
+
+         setTimeout(() => {
+        setFilteredDocsData(filteredData);
+        setIsFiltering(false); // Stop the animation
+        }, 500); // Delay the update to match the animation duration
+    };
+      
+      useEffect(() => {
+        handleSearch();
+    }, [searchQuery]);
+    
+
     const [open, setOpen] = React.useState(false);
     const [title, setTitle] = useState('')
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const collectionRef = collection(database, 'docInfo')
     // const collectionRef = collection(database, userID);
-    const [docsData, setDocsData] = useState([]);
     let navigate = useNavigate();
     var roles = {};
     roles[user.uid] = "owner";
@@ -113,6 +139,15 @@ export default function Home({database}) {
             <ToastContainer />
             <h1>Text Editor</h1>
 
+            <div className='search-bar'>
+                <input
+                class='doc-search-input'
+                type='text'
+                placeholder='Search...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </div>
             <button className='sign-out' onClick={handleSignOut}>
                 Sign Out
             </button>
@@ -126,12 +161,14 @@ export default function Home({database}) {
 
             
             <div className='doc-grid'>
-                {docsData.map((doc) => {
-                    return (
+            {(searchQuery !== '' && filteredDocsData.length === 0) ? (
+            <p>No matching documents found.</p>
+            ) : (
+            (searchQuery === '' ? docsData : filteredDocsData).map((doc) => (
                         <div
                             key={doc.id} 
-                            className='doc-grid-child' 
-                            onClick={() => getID(doc.id)}>
+                            className={`doc-grid-child ${isFiltering ? 'filtering' : ''}`}
+  onClick={() => getID(doc.id)}>
                             <p>{doc.title}</p>
                             <div dangerouslySetInnerHTML={{ __html: doc.docContent }} style={{ color: 'white', fontWeight: 'bold' }} />
                             <p className='doc-date'> {doc.lastUpdatedDate !== '' ? `Last Updated: ${doc.lastUpdatedDate}` : 'No Edits'} </p>
@@ -139,8 +176,8 @@ export default function Home({database}) {
                                 <p>{doc.textSnippet}</p>
                             </div>
                         </div>
-                    )
-                })}
+                    ))
+            )}
             </div>
 
             <Modal
