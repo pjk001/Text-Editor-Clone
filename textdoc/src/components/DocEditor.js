@@ -29,10 +29,10 @@ import { blue } from '@mui/material/colors';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import DialogContent from '@mui/material/DialogContent';
-import {transemail, transuid} from '../sharing.js'
+import {transemail, transuid, makeWriter, makeReader, changeOwner} from '../sharing.js'
 
 function ShareDialog(props) {
-    const { onClose, open, emailsIn, user, setUser } = props;
+    const { onClose, open, emailsIn, user, setUser, setShareUsers } = props;
     console.log(emailsIn);
     var result = [];
     for (const key in emailsIn){
@@ -58,7 +58,8 @@ function ShareDialog(props) {
 
     const handleAdd = () => {
         const new_email = transemail(user);
-        emailsIn[new_email] = "writer";
+        if(new_email == undefined){alert("Invalid user"); return;}
+        if(!makeWriter(emailsIn, new_email)){alert("Document must have an owner"); return;}
         setShareUsers(emailsIn);
         setUser('');
     };
@@ -407,6 +408,7 @@ export default function DocEditor({ database }) {
                 setUser = {setUser}
                 onClose={handleShareClose}
                 emailsIn={shareUsers}
+                setShareUsers={setShareUsers}
             />
         </div>
     )
