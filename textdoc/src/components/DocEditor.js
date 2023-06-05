@@ -137,7 +137,7 @@ function ShareDialog(props) {
                         <PersonIcon />
                     </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={u.email} className='share-user-text'/>
+                    <ListItemText primary={u.email} className="share-user-text"/>
                     <FormControl fullWidth>
                         <InputLabel id="share-select-label">Permission</InputLabel>
                         <Select
@@ -146,7 +146,7 @@ function ShareDialog(props) {
                         value={u.perm}
                         label="Permission"
                         onChange={(e) => handlePermChange(e.target.value, u.id)}
-                        sx = {{float: 'right'}}
+                        // sx = {{float: 'right'}}
                         >
                         <MenuItem value={'owner'}>Owner</MenuItem>
                         <MenuItem value={'writer'}>Editor</MenuItem>
