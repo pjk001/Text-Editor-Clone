@@ -1,6 +1,5 @@
 import { useState, useEffect, React, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// import ReactDOM from "react-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, doc, getDoc, updateDoc, onSnapshot, deleteDoc, setDoc } from 'firebase/firestore';
@@ -9,9 +8,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './custom-quill.css';
 import Modal from './Modal';
-// import jsPDF from 'jspdf';
-// import { PDFExport } from 'react-html2pdf';
-// import { Preview, print } from 'react-html2pdf';
 import html2pdf from 'html2pdf.js';
 
 import PropTypes from 'prop-types';
@@ -146,7 +142,6 @@ function ShareDialog(props) {
                         value={u.perm}
                         label="Permission"
                         onChange={(e) => handlePermChange(e.target.value, u.id)}
-                        // sx = {{float: 'right'}}
                         >
                         <MenuItem value={'owner'}>Owner</MenuItem>
                         <MenuItem value={'writer'}>Editor</MenuItem>
@@ -247,14 +242,6 @@ export default function DocEditor({ database }) {
     const handleShareClose = () => setShareOpen(false);
     const [user, setUser] = useState('');
     const [permIn, setPermIn] = useState('');
-
-    // const [sharedUsers, setSharedUsers] = useState([]);
-
-    // const data = [
-    //     {id: 0, email:'username@gmail.com', perm: 'owner'}, 
-    //     {id: 1, email:'user02@gmail.com', perm: 'view'},
-    //     {id: 2, email:'user03@gmail.com', perm: 'edit'}
-    // ];
 
     const appendContent = (content) => {
         const newContent = docContent + content;
@@ -426,6 +413,7 @@ export default function DocEditor({ database }) {
             });
     };
 
+    // Updates roles when the shared user settings change
     const shareChange = (newUsers) => {
         const targetDoc = doc(collectionRef, params.id);
         updateDoc(targetDoc, {
@@ -435,7 +423,7 @@ export default function DocEditor({ database }) {
                 showSaveToast();
             })
             .catch(() => {
-                toast.error('Unable To Update Title', {
+                toast.error('Unable To Update Shared Users', {
                     autoClose: 2000,
                 });
             });
