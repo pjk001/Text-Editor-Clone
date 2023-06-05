@@ -276,6 +276,9 @@ export default function DocEditor({ database }) {
 
     // Function to delete a Document
     const deleteDocument = () => {
+        let auth = getAuth();
+        let user = auth.currentUser;
+        if(shareUsers[user.uid] != "owner"){alert("Insufficient permissions"); return;}
         deleteDoc(doc(collectionRef, params.id));
         console.log("Deleting Doc. ID: ", params.id);
         console.log("Deleting Title: ", docTitle);
