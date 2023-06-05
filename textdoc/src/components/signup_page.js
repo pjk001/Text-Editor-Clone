@@ -4,6 +4,7 @@ import { auth, app } from "../firebaseConfig"
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import {AddUser} from '../sharing.js';
 
 
 export default function SignUp() {
@@ -19,13 +20,6 @@ export default function SignUp() {
   const handlePassword = (event) => {
     setPassword(event.target.value);
   }
-
-
-  //don't know who was working on AddUser but it needs to be finished...
-  const AddUser = (user) => {
-    //not defined yet
-    console.log("User added:", user);
-  };
 
   const signUp = (event) => {
     event.preventDefault();
