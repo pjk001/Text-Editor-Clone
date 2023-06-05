@@ -29,20 +29,40 @@ import { blue } from '@mui/material/colors';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import DialogContent from '@mui/material/DialogContent';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import {transemail, transuid, makeWriter, makeReader, changeOwner} from '../sharing.js'
 
+
+
+// function ShareDialog(props) {
+//     const { onClose, open, emailsIn, user, setUser, setShareUsers } = props;
+//     console.log(emailsIn);
+//     var result = [];
+//     for (const key in emailsIn){
+//         // console.log("For loop started");
+//         // transuid(key).then((email) => result.push(email.concat(": ", emailsIn[key])))
+//         const email = String(transuid(key));
+//         result.push(email.concat(": ", emailsIn[key]))
+//     }
+//     console.log(result);
+    
+
 function ShareDialog(props) {
-    const { onClose, open, emailsIn, user, setUser, setShareUsers } = props;
-    console.log(emailsIn);
-    var result = [];
-    for (const key in emailsIn){
+    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn } = props;
+    
+    var result = []
+
+    for (const key in sharedUsers){
         // console.log("For loop started");
         // transuid(key).then((email) => result.push(email.concat(": ", emailsIn[key])))
         const email = String(transuid(key));
-        result.push(email.concat(": ", emailsIn[key]))
+        // result.push(email.concat(": ", sharedUsers[key]))
+        result.push(email)
     }
-    console.log(result);
-    
+
     const handleClose = () => {
       onClose();
     };
@@ -53,15 +73,49 @@ function ShareDialog(props) {
 
     const inUser = (value) => {
         setUser(value);
-        
     };
 
     const handleAdd = () => {
         const new_email = transemail(user);
         if(new_email == undefined){alert("Invalid user"); return;}
-        if(!makeWriter(emailsIn, new_email)){alert("Document must have an owner"); return;}
-        setShareUsers(emailsIn);
+        // if(!makeWriter(emailsIn, new_email)){alert("Document must have an owner"); return;}
+        // setShareUsers(emailsIn);
+
+        switch(String(permIn)) {
+            case 'owner':
+                if(!changeOwner(sharedUsers, new_email)){alert("Document must have an owner"); return;}
+                break;
+            case 'writer':
+                if(!makeWriter(sharedUsers, new_email)){alert("Document must have an owner"); return;}
+                break;
+            case 'reader':
+                if(!makeReader(sharedUsers, new_email)){alert("Document must have an owner"); return;}
+                break;
+            default:
+                alert("Set Permission");
+        }
+
+        setSharedUsers([...sharedUsers, {new_email}]);
+        // setSharedUsers([...sharedUsers, {id: getRandomInt(100), email: user, perm: permIn}]);
         setUser('');
+        setPermIn('');
+    };
+
+    const handlePermChange = (value, id) => {
+        const newList = sharedUsers.slice();
+        switch(String(value)) {
+            case 'owner':
+                if(!changeOwner(sharedUsers, id)){alert("Document must have an owner"); return;}
+                break;
+            case 'writer':
+                if(!makeWriter(sharedUsers, id)){alert("Document must have an owner"); return;}
+                break;
+            case 'reader':
+                if(!makeReader(sharedUsers, id)){alert("Document must have an owner"); return;}
+                break;
+            default:
+        }
+        setSharedUsers(newList);
     };
   
     return (
@@ -87,15 +141,29 @@ function ShareDialog(props) {
         
         <DialogContent dividers={true}>
         <List sx={{ pt: 0 }}>
-            {result.map((email) => (
-                <ListItem disableGutters>
+            {result.map((u) => (
+                <ListItem disableGutters key={transemail(u)}>
                 <ListItemButton>
                     <ListItemAvatar>
                     <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
                         <PersonIcon />
                     </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={email} />
+                    <ListItemText primary={u} sx={{minWidth:'200px'}}/>
+                    <FormControl fullWidth>
+                        <InputLabel id="share-select-label">Permission</InputLabel>
+                        <Select
+                        labelId="share-select-label"
+                        id="share-select"
+                        value={sharedUsers[transemail(u)]}
+                        label="Permission"
+                        onChange={(e) => handlePermChange(e.target.value, transemail(u))}
+                        >
+                        <MenuItem value={'owner'}>Owner</MenuItem>
+                        <MenuItem value={'writer'}>Editor</MenuItem>
+                        <MenuItem value={'reader'}>Viewer</MenuItem>
+                        </Select>
+                    </FormControl>
                 </ListItemButton>
                 </ListItem>
             ))}
@@ -118,6 +186,20 @@ function ShareDialog(props) {
                     onChange={(e) => inUser(e.target.value)}
                     class="share-input"
                 />
+                <FormControl fullWidth>
+                    <InputLabel id="share-select-label">Permission</InputLabel>
+                    <Select
+                    labelId="share-select-label"
+                    id="share-select"
+                    value={permIn}
+                    label="Permission"
+                    onChange={(e) => setPermIn(e.target.value)}
+                    >
+                    <MenuItem value={'owner'}>Owner</MenuItem>
+                    <MenuItem value={'writer'}>Editor</MenuItem>
+                    <MenuItem value={'reader'}>Viewer</MenuItem>
+                    </Select>
+                </FormControl>
             </ListItemButton>
           </ListItem>
         </List>
@@ -128,7 +210,6 @@ function ShareDialog(props) {
   ShareDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    emailsIn: PropTypes.array.isRequired,
   };
 
 export default function DocEditor({ database }) {
@@ -159,6 +240,15 @@ export default function DocEditor({ database }) {
     const handleShareClose = () => setShareOpen(false);
     const [shareOpen, setShareOpen] = useState(false);
     const [user, setUser] = useState('');
+    const [permIn, setPermIn] = useState('');
+
+    // const data = [
+    //     {id: 0, email:'username@gmail.com', perm: 'owner'}, 
+    //     {id: 1, email:'user02@gmail.com', perm: 'view'},
+    //     {id: 2, email:'user03@gmail.com', perm: 'edit'}
+    // ];
+
+    // const [sharedUsers, setSharedUsers] = useState(data);
 
     const getQuillData = (value) => {
         setDocContent(value);
@@ -166,7 +256,7 @@ export default function DocEditor({ database }) {
             setSavePending(true);
         }
         // lastUpdatedChange();
-    }
+    };
 
     // Function to delete a Document
     const deleteDocument = () => {
@@ -181,7 +271,7 @@ export default function DocEditor({ database }) {
         if (unsubscribeRef.current) {
             unsubscribeRef.current();
         }
-    }
+    };
 
     
     // Function to create the string for the last updated time
@@ -217,7 +307,7 @@ export default function DocEditor({ database }) {
 
         console.log(doc.docContent);
         unsubscribeRef.current = unsubscribe;
-    }
+    };
 
     useEffect(() => {
         if (isMounted.current) {
@@ -232,7 +322,7 @@ export default function DocEditor({ database }) {
                 unsubscribeRef.current();
             }
         };
-    }, [])
+    }, []);
 
     // Save data with debounce
     useEffect(() => {
@@ -409,9 +499,11 @@ export default function DocEditor({ database }) {
                 user = {user}
                 setUser = {setUser}
                 onClose={handleShareClose}
-                emailsIn={shareUsers}
-                setShareUsers={setShareUsers}
+                sharedUsers = {shareUsers}
+                setSharedUsers={setShareUsers}
+                permIn={permIn}
+                setPermIn={setPermIn}
             />
         </div>
-    )
+    );
 }
