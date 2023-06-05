@@ -119,6 +119,7 @@
   background-color: transparent;
   display: flex;
   z-index: 2;
+  margin-right: 10px;
 }
 
 .share-input:focus {
@@ -126,6 +127,13 @@
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.35);
   animation: glow 1.5s infinite;
+}
+
+.share-user-text {
+  min-width: 200px;
+  display: inline-block;
+  overflow-x: auto;
+  margin-right: 10px;
 }
 
 

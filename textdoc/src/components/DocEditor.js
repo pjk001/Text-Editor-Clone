@@ -1,6 +1,6 @@
 import { useState, useEffect, React, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ReactDOM from "react-dom";
+// import ReactDOM from "react-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
@@ -9,9 +9,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './custom-quill.css';
 import Modal from './Modal';
-import jsPDF from 'jspdf';
-import { PDFExport } from 'react-html2pdf';
-import { Preview, print } from 'react-html2pdf';
+// import jsPDF from 'jspdf';
+// import { PDFExport } from 'react-html2pdf';
+// import { Preview, print } from 'react-html2pdf';
 import html2pdf from 'html2pdf.js';
 
 import PropTypes from 'prop-types';
@@ -33,43 +33,13 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import {transemail, transuid, makeWriter, makeReader, changeOwner, removeAccess} from '../sharing.js'
-
-
-
-// function ShareDialog(props) {
-//     const { onClose, open, emailsIn, user, setUser, setShareUsers } = props;
-//     console.log(emailsIn);
-//     var result = [];
-//     for (const key in emailsIn){
-//         // console.log("For loop started");
-//         // transuid(key).then((email) => result.push(email.concat(": ", emailsIn[key])))
-//         const email = String(transuid(key));
-//         result.push(email.concat(": ", emailsIn[key]))
-//     }
-//     console.log(result);
+import { transemail, transuid, makeWriter, makeReader, changeOwner, removeAccess } from '../sharing.js'
     
-
+// Pop-up for list of shared users
 function ShareDialog(props) {
-    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn, ogMap } = props;
-    
-    // var result = []
-
-    // for (const key in sharedUsers){
-    //     // console.log("For loop started");
-    //     // transuid(key).then((email) => result.push(email.concat(": ", emailsIn[key])))
-    //     const email = String(transuid(key));
-    //     // result.push(email.concat(": ", sharedUsers[key]))
-    //     result.push(email)
-    // }
-
-    // console.log("Data2: " + JSON.stringify(sharedUsers));
+    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn, ogMap, shareChange } = props;
 
     const handleClose = () => {
-      onClose();
-    };
-  
-    const handleListItemClick = () => {
       onClose();
     };
 
@@ -80,8 +50,6 @@ function ShareDialog(props) {
     const handleAdd = () => {
         const new_email = transemail(user);
         if(new_email === undefined){alert("Invalid user"); return;}
-        // if(!makeWriter(emailsIn, new_email)){alert("Document must have an owner"); return;}
-        // setShareUsers(emailsIn);
 
         switch(String(permIn)) {
             case 'owner':
@@ -100,17 +68,13 @@ function ShareDialog(props) {
         }
 
         setSharedUsers([...sharedUsers, {id: new_email, email: user, perm: permIn}]);
-        // setSharedUsers(sharedUsers);
-        // result.push(new_email);
-        // setSharedUsers([...sharedUsers, {id: getRandomInt(100), email: user, perm: permIn}]);
+        shareChange(ogMap);
         setUser('');
         setPermIn('');
     };
 
     const handlePermChange = (value, id) => {
         const newList = sharedUsers.slice();
-        // console.log("Index: " + sharedUsers.findIndex(x => x.id === id));
-        // console.log("Removed: " + JSON.stringify(sharedUsers.splice(sharedUsers.findIndex(x => x.id === id), 1)));
         switch(String(value)) {
             case 'owner':
                 if(!changeOwner(ogMap, id)){alert("Document must have an owner"); return;}
@@ -127,13 +91,14 @@ function ShareDialog(props) {
                 if(!removeAccess(ogMap, id)){alert("Document must have an owner"); return;}
                 newList.splice(newList.findIndex(x => x.id === id), 1);
                 setSharedUsers(newList);
+                shareChange(ogMap);
                 return;
-                break;
             default:
         }
         const sUsr = newList.find(x => x.id === id);
         sUsr.perm = value;
         setSharedUsers(newList);
+        shareChange(ogMap);
     };
   
     return (
@@ -167,7 +132,7 @@ function ShareDialog(props) {
                         <PersonIcon />
                     </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={u.email} sx={{minWidth:'200px'}}/>
+                    <ListItemText primary={u.email} className='share-user-text'/>
                     <FormControl fullWidth>
                         <InputLabel id="share-select-label">Permission</InputLabel>
                         <Select
@@ -176,6 +141,7 @@ function ShareDialog(props) {
                         value={u.perm}
                         label="Permission"
                         onChange={(e) => handlePermChange(e.target.value, u.id)}
+                        sx = {{float: 'right'}}
                         >
                         <MenuItem value={'owner'}>Owner</MenuItem>
                         <MenuItem value={'writer'}>Editor</MenuItem>
@@ -229,6 +195,13 @@ function ShareDialog(props) {
   ShareDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
+    user: PropTypes.string.isRequired,
+    setUser: PropTypes.func.isRequired,
+    sharedUsers: PropTypes.array.isRequired,
+    setSharedUsers: PropTypes.func.isRequired,
+    permIn: PropTypes.string.isRequired,
+    setPermIn: PropTypes.func.isRequired,
+    ogMap: PropTypes.any.isRequired,
   };
 
 export default function DocEditor({ database }) {
@@ -255,9 +228,9 @@ export default function DocEditor({ database }) {
     const handleClose = () => setOpen(false);
     const [open, setOpen] = useState(false);
 
+    const [shareOpen, setShareOpen] = useState(false);
     const handleShareOpen = () => setShareOpen(true);
     const handleShareClose = () => setShareOpen(false);
-    const [shareOpen, setShareOpen] = useState(false);
     const [user, setUser] = useState('');
     const [permIn, setPermIn] = useState('');
 
@@ -333,7 +306,7 @@ export default function DocEditor({ database }) {
             return;
         }
         isMounted.current = true;
-        getData()
+        getData();
 
         // Cleanup function to detach the listener
         return () => {
@@ -356,7 +329,7 @@ export default function DocEditor({ database }) {
                     body: docContent,
                     lastUpdatedDate: currDate,
                     lastUpdatedTime: currTime,
-                    docContent: docContent
+                    docContent: docContent,
                 })
                     .then(() => {
                         showSaveToast();
@@ -372,7 +345,7 @@ export default function DocEditor({ database }) {
                 setLastUpdatedTime(currTime);
             }, 1000);
         }
-        return () => clearTimeout(debounceTimer)
+        return () => clearTimeout(debounceTimer);
     }, [savePending, docContent]);
 
     // Warn user when leaving with unsaved changes
@@ -415,6 +388,21 @@ export default function DocEditor({ database }) {
         const targetDoc = doc(collectionRef, params.id);
         updateDoc(targetDoc, {
             title: newTitle,
+        })
+            .then(() => {
+                showSaveToast();
+            })
+            .catch(() => {
+                toast.error('Unable To Update Title', {
+                    autoClose: 2000,
+                });
+            });
+    };
+
+    const shareChange = (newUsers) => {
+        const targetDoc = doc(collectionRef, params.id);
+        updateDoc(targetDoc, {
+            roles: newUsers,
         })
             .then(() => {
                 showSaveToast();
@@ -510,9 +498,8 @@ export default function DocEditor({ database }) {
         }, 2000); // Adjust the delay time (in milliseconds) as needed
     };
 
-
-    
-
+    // Convert shareUsers, an associative array, to sharedUsers, a normal array
+    // This will make it easier to do real-time updates
     const [sharedUsers, setSharedUsers] = useState([]);
 
     useEffect(() => {
@@ -526,8 +513,6 @@ export default function DocEditor({ database }) {
         setSharedUsers(data);
         setSharedUsers(data);
       },[shareUsers]);
-
-    // console.log("Data1: " + JSON.stringify(data));
 
     // RETURN
     return (
@@ -585,12 +570,13 @@ export default function DocEditor({ database }) {
                 open={shareOpen}
                 user = {user}
                 setUser = {setUser}
-                onClose={handleShareClose}
+                onClose = {handleShareClose}
                 sharedUsers = {sharedUsers}
-                setSharedUsers={setSharedUsers}
-                permIn={permIn}
-                setPermIn={setPermIn}
-                ogMap={shareUsers}
+                setSharedUsers = {setSharedUsers}
+                permIn = {permIn}
+                setPermIn = {setPermIn}
+                ogMap = {shareUsers}
+                shareChange = {shareChange}
             />
         </div>
     );

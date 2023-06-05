@@ -4,7 +4,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { create } from '@mui/material/styles/createTransitions';
-// import {user} from '../user.js'
 
 import { auth, app } from "../firebaseConfig"
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
