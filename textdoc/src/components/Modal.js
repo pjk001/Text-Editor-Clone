@@ -26,6 +26,8 @@ export default function ModalComponent({
     setTitle,
     createDoc,
     deleteDoc,
+    exportPDF,
+    exportMD
 }) {
     const handleClose = () => setOpen(false);
 
@@ -78,6 +80,31 @@ export default function ModalComponent({
                             </button>
                             <button className="cancel-option" onClick={handleClose}>
                                 No
+                            </button>
+                        </div>
+                    </Box>
+                </Modal>
+            )}
+
+            {exportPDF && exportMD && (
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+
+                    <Box sx={{ ...style, backgroundColor: 'rgba(255, 255, 255, 0.4)', border: 'none', borderRadius: '12px' }}>
+                        <div className="delete-container">
+                            <body className="confirmation-message" style={{ opacity: 0.7, borderRadius: '12px' }}>
+                                Choose Output Type
+                            </body>
+
+                            <button className="confirmation-option" onClick={exportPDF}>
+                                PDF
+                            </button>
+                            <button className="cancel-option" onClick={exportMD}>
+                                Markdown
                             </button>
                         </div>
                     </Box>

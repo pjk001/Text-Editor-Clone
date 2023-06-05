@@ -261,6 +261,10 @@ export default function DocEditor({ database }) {
     const handleClose = () => setOpen(false);
     const [open, setOpen] = useState(false);
 
+    const handleExportOpen = () => setExportOpen(true);
+    const handleExportClose = () => setExportOpen(false);
+    const [exportOpen, setExportOpen] = useState(false);
+
     const handleShareOpen = () => setShareOpen(true);
     const handleShareClose = () => setShareOpen(false);
     const [shareOpen, setShareOpen] = useState(false);
@@ -580,7 +584,7 @@ export default function DocEditor({ database }) {
                     className="doc-title-input"
                 />
                 <span className="last-update-time">{getTheLastUpdatedString()}</span>
-                <div className="options-container">
+            <div className="options-container">
                 <button 
                     className="editor-menu-button" onClick={handleOpen}
                     >
@@ -593,24 +597,17 @@ export default function DocEditor({ database }) {
                 </button>
                 {docContent && (<button 
                     className="editor-menu-button"
-                    onClick={exportAsPDF}
+                    onClick={handleExportOpen}
                     >
-                        Export as PDF
+                        Export
                 </button>
                 )}
-                    {docContent && (<button
-                        className="editor-menu-button"
-                        onClick={exportAsMD}
-                    >
-                        Export as MD
-                    </button>
-                    )}
-                 <button 
-                    className="editor-menu-button" onClick={handleHomeButton}
-                    >
-                    Home
-                </button>
-                </div>
+                <button 
+                className="editor-menu-button" onClick={handleHomeButton}
+                >
+                Home
+            </button>
+            </div>
 
             </div>
 
@@ -625,6 +622,18 @@ export default function DocEditor({ database }) {
                 setTitle={null}
                 createDoc={null}
                 deleteDoc={deleteDocument}
+                exportMD={null}
+                exportPDF={null}
+            />
+            <Modal
+                open={exportOpen}
+                setOpen={setExportOpen}
+                title={null}
+                setTitle={null}
+                createDoc={null}
+                deleteDoc={null}
+                exportMD={exportAsMD}
+                exportPDF={exportAsPDF}
             />
 
             <ShareDialog
