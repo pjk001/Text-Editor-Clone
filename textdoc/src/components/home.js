@@ -37,8 +37,8 @@ export default function Home({database}) {
 
     const handleSearch = () => {
         const filteredData = docsData.filter((doc) => {
-          const titleWithoutSpaces = doc.title.replace(/\s/g, '');
-          const searchQueryWithoutSpaces = searchQuery.replace(/\s/g, '');
+          const titleWithoutSpaces = doc.title.replace(/\s|'/g, '');
+          const searchQueryWithoutSpaces = searchQuery.replace(/\s|'/g, '');
       
           return titleWithoutSpaces.toLowerCase().includes(searchQueryWithoutSpaces.toLowerCase());
         });
@@ -170,7 +170,7 @@ export default function Home({database}) {
                             className={`doc-grid-child ${isFiltering ? 'filtering' : ''}`}
                             onClick={() => getID(doc.id)}>
                             <p>{doc.title}</p>
-                            <div dangerouslySetInnerHTML={{ __html: doc.docContent }} style={{ color: 'white', fontWeight: 'bold' }} />
+                            <div dangerouslySetInnerHTML={{ __html: doc.docContent ? (doc.docContent.length > 60 ? doc.docContent.substring(0,60) + '...' : doc.docContent) : '...' }} style={{ color: 'white', fontWeight: 'bold' }} />
                             <p className='doc-date'> {doc.lastUpdatedDate !== '' ? `Last Updated: ${doc.lastUpdatedDate}` : 'No Edits'} </p>
                             <div className='doc-content'>
                                 <p>{doc.textSnippet}</p>
