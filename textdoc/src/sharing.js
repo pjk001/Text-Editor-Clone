@@ -64,7 +64,8 @@ export function removeAccess(roles, user){
 
 export function changeOwner(roles, user){
 	const owner = Object.keys(roles).find(key => roles[key] === "owner");
-	delete roles[owner];
+	// delete roles[owner];
+	roles[owner] = "writer";
 	roles[user] = "owner";
 	return true;
 }

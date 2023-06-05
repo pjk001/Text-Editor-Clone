@@ -16,7 +16,7 @@ export default function Home({database}) {
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/auth.user
     const uid = user.uid;
-    console.log("here is the 1st user uid: ", uid)
+    console.log("here is the 1st user uid: ", uid);
     // ...
     } else {
     // User is signed out
@@ -57,10 +57,10 @@ export default function Home({database}) {
     
 
     const [open, setOpen] = React.useState(false);
-    const [title, setTitle] = useState('')
+    const [title, setTitle] = useState('');
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const collectionRef = collection(database, 'docInfo')
+    const collectionRef = collection(database, 'docInfo');
     // const collectionRef = collection(database, userID);
     let navigate = useNavigate();
     var roles = {};
@@ -79,35 +79,35 @@ export default function Home({database}) {
             })
             .then(() => {
                 toast.success('Document Created');
-                handleClose()
+                handleClose();
             })
             .catch(() => {
                 toast.error('Cannot Create Document');
-            })
+            });
         }
     }
 
     const getDoc = () => {
         onSnapshot(collectionRef, (data) => {
             setDocsData(data.docs.map((doc) => {
-                return {...doc.data(), id: doc.id}
-            }))
-        })
+                return {...doc.data(), id: doc.id};
+            }));
+        });
     }
 
-    const isMounted = useRef()
+    const isMounted = useRef();
 
     useEffect(() => {
         if (isMounted.current) {
-            return
+            return;
         }
 
         isMounted.current = true;
-        getDoc()
+        getDoc();
     }, [])
 
     const getID = (id) => {
-        navigate(`/documents/${id}`)
+        navigate(`/documents/${id}`);
     }
 
     //philip
@@ -141,7 +141,7 @@ export default function Home({database}) {
 
             <div className='search-bar'>
                 <input
-                class='doc-search-input'
+                className='doc-search-input'
                 type='text'
                 placeholder='Search...'
                 value={searchQuery}
@@ -168,7 +168,7 @@ export default function Home({database}) {
                         <div
                             key={doc.id} 
                             className={`doc-grid-child ${isFiltering ? 'filtering' : ''}`}
-  onClick={() => getID(doc.id)}>
+                            onClick={() => getID(doc.id)}>
                             <p>{doc.title}</p>
                             <div dangerouslySetInnerHTML={{ __html: doc.docContent }} style={{ color: 'white', fontWeight: 'bold' }} />
                             <p className='doc-date'> {doc.lastUpdatedDate !== '' ? `Last Updated: ${doc.lastUpdatedDate}` : 'No Edits'} </p>
@@ -190,6 +190,6 @@ export default function Home({database}) {
             />            
 
         </div>
-    )
+    );
 }
 

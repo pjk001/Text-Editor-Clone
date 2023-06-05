@@ -86,6 +86,8 @@ function ShareDialog(props) {
         switch(String(permIn)) {
             case 'owner':
                 if(!changeOwner(ogMap, new_email)){alert("Document must have an owner"); return;}
+                const owner = sharedUsers.find(x => x.perm === 'owner');
+                owner.perm = 'writer';
                 break;
             case 'writer':
                 if(!makeWriter(ogMap, new_email)){alert("Document must have an owner"); return;}
@@ -107,9 +109,13 @@ function ShareDialog(props) {
 
     const handlePermChange = (value, id) => {
         const newList = sharedUsers.slice();
+        // console.log("Index: " + sharedUsers.findIndex(x => x.id === id));
+        // console.log("Removed: " + JSON.stringify(sharedUsers.splice(sharedUsers.findIndex(x => x.id === id), 1)));
         switch(String(value)) {
             case 'owner':
                 if(!changeOwner(ogMap, id)){alert("Document must have an owner"); return;}
+                const owner = newList.find(x => x.perm === 'owner');
+                owner.perm = 'writer';
                 break;
             case 'writer':
                 if(!makeWriter(ogMap, id)){alert("Document must have an owner"); return;}
@@ -119,7 +125,8 @@ function ShareDialog(props) {
                 break;
             case 'del':
                 if(!removeAccess(ogMap, id)){alert("Document must have an owner"); return;}
-                setSharedUsers(sharedUsers.splice(sharedUsers.findIndex(x => x.id === id), 1));
+                newList.splice(newList.findIndex(x => x.id === id), 1);
+                setSharedUsers(newList);
                 return;
                 break;
             default:
@@ -196,7 +203,7 @@ function ShareDialog(props) {
                     type="text"
                     value={user}
                     onChange={(e) => inUser(e.target.value)}
-                    class="share-input"
+                    className="share-input"
                 />
                 <FormControl fullWidth>
                     <InputLabel id="share-select-label">Permission</InputLabel>
@@ -253,6 +260,8 @@ export default function DocEditor({ database }) {
     const [shareOpen, setShareOpen] = useState(false);
     const [user, setUser] = useState('');
     const [permIn, setPermIn] = useState('');
+
+    // const [sharedUsers, setSharedUsers] = useState([]);
 
     // const data = [
     //     {id: 0, email:'username@gmail.com', perm: 'owner'}, 
@@ -448,19 +457,21 @@ export default function DocEditor({ database }) {
         console.log("Finished pdf export function");
     };
 
-    var data = [];
     
-    for (const key in shareUsers) {
-        data.push(
-            {id: key, email: String(transuid(key)), perm: String(shareUsers[key])}
-        );
-    }
 
     const [sharedUsers, setSharedUsers] = useState([]);
 
     useEffect(() => {
+        var data = [];
+    
+        for (const key in shareUsers) {
+            data.push(
+                {id: key, email: String(transuid(key)), perm: String(shareUsers[key])}
+            );
+        }
         setSharedUsers(data);
-      },[data]);
+        setSharedUsers(data);
+      },[shareUsers]);
 
     // console.log("Data1: " + JSON.stringify(data));
 
@@ -473,7 +484,7 @@ export default function DocEditor({ database }) {
                     type="text"
                     value={docTitle}
                     onChange={(e) => titleChange(e.target.value)}
-                    class="doc-title-input"
+                    className="doc-title-input"
                 />
                 <span className="last-update-time">{getTheLastUpdatedString()}</span>
                 <div className="options-container">

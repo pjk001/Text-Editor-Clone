@@ -52,6 +52,7 @@ const customizedErrorMessage = (errorCode) => {
     case "auth/wrong-password":
       errorMessage = "Invalid password";
       break;
+    default:
   }
 
   return errorMessage;
@@ -61,26 +62,26 @@ const customizedErrorMessage = (errorCode) => {
     <>
 
       <div className="vertical-container">
-      <h1 class="welcome-title">Welcome to Text Editor</h1>
-      <section class="box-container">
+      <h1 className="welcome-title">Welcome to Text Editor</h1>
+      <section className="box-container">
       <div>
         <h2>Sign In</h2>
       </div>
       <form onSubmit={signIn}>
-        <div class="input-container">
-          <input type="email" placeholder="Enter your email" class="input-field" value={email} onChange={handleEmail}>
+        <div className="input-container">
+          <input type="email" placeholder="Enter your email" className="input-field" value={email} onChange={handleEmail}>
           </input>
         </div>
 
-        <div class="input-container">
-          <input type="password" placeholder="Enter your password" class="input-field" value={password} onChange={handlePassword}>
+        <div className="input-container">
+          <input type="password" placeholder="Enter your password" className="input-field" value={password} onChange={handlePassword}>
           </input>
         </div>
 
-        <p class="question">Don't have an account? <span><Link to="/signup"> Create one</Link></span></p>
+        <p className="question">Don't have an account? <span><Link to="/signup"> Create one</Link></span></p>
 
         <div>
-          <button type="submit" name="submit" class="submit-button" value="Sign In">Sign In</button>
+          <button type="submit" name="submit" className="submit-button" value="Sign In">Sign In</button>
         </div>
       </form>
       </section>
