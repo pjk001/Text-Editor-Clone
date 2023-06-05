@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ReactDOM from "react-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { collection, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -34,6 +34,12 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import {transemail, transuid, makeWriter, makeReader, changeOwner, removeAccess} from '../sharing.js'
+import Markdown from 'marked-react';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import turndown from 'turndown';
+import getIndentLevel from 'turndown';
+
 
 
 
@@ -430,7 +436,7 @@ export default function DocEditor({ database }) {
     const exportAsPDF = () => {
         const options = {
             filename: 'document.pdf',
-            html2canvas: { scale: 2 },
+            html2canvas: { scale: 2.5 },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
         };
 
@@ -500,7 +506,7 @@ export default function DocEditor({ database }) {
       </body>
     </html>
   `;
-
+        console.log(docContent);
         html2pdf().set(options).from(content).save();
         console.log("Finished pdf export function");
 
@@ -528,6 +534,39 @@ export default function DocEditor({ database }) {
       },[shareUsers]);
 
     // console.log("Data1: " + JSON.stringify(data));
+
+
+// Export as markdown
+
+    const turndownService = new turndown();
+
+    turndownService.addRule('underlineHeaders', {
+    filter: ['h1','h2'],
+        replacement: function (content, node, options) {
+            const headerLevel = node.tagName === 'H1' ? '#' : '##';
+            return headerLevel + ' ' + content + '\n\n';
+        }
+    });
+
+
+    const exportAsMD = () => {
+    const markdownContent = turndownService.turndown(docContent);
+
+    // Sanitize the Markdown content using DOMPurify
+    const sanitizedContent = DOMPurify.sanitize(markdownContent);
+
+    // Create a Blob from the sanitized Markdown content
+    const blob = new Blob([sanitizedContent], { type: 'text/markdown' });
+
+    // Create a download link for the Markdown file
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = 'document.md'; // Specify the filename for the downloaded Markdown file
+
+    // Trigger the file download
+    downloadLink.click();
+    };
+
 
     // RETURN
     return (
@@ -559,6 +598,13 @@ export default function DocEditor({ database }) {
                         Export as PDF
                 </button>
                 )}
+                    {docContent && (<button
+                        className="editor-menu-button"
+                        onClick={exportAsMD}
+                    >
+                        Export as MD
+                    </button>
+                    )}
                  <button 
                     className="editor-menu-button" onClick={handleHomeButton}
                     >
