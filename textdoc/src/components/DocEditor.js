@@ -33,7 +33,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import {transemail, transuid, makeWriter, makeReader, changeOwner} from '../sharing.js'
+import {transemail, transuid, makeWriter, makeReader, changeOwner, removeAccess} from '../sharing.js'
 
 
 
@@ -117,9 +117,14 @@ function ShareDialog(props) {
             case 'reader':
                 if(!makeReader(ogMap, id)){alert("Document must have an owner"); return;}
                 break;
+            case 'del':
+                if(!removeAccess(ogMap, id)){alert("Document must have an owner"); return;}
+                setSharedUsers(sharedUsers.splice(sharedUsers.findIndex(x => x.id === id), 1));
+                return;
+                break;
             default:
         }
-        const sUsr = sharedUsers.find(x => x.id === id);
+        const sUsr = newList.find(x => x.id === id);
         sUsr.perm = value;
         setSharedUsers(newList);
     };
@@ -168,6 +173,7 @@ function ShareDialog(props) {
                         <MenuItem value={'owner'}>Owner</MenuItem>
                         <MenuItem value={'writer'}>Editor</MenuItem>
                         <MenuItem value={'reader'}>Viewer</MenuItem>
+                        <MenuItem value={'del'}>Remove User</MenuItem>
                         </Select>
                     </FormControl>
                 </ListItemButton>
