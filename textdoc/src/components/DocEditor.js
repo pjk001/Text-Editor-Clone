@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ReactDOM from "react-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { collection, doc, getDoc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, updateDoc, onSnapshot, deleteDoc, setDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -265,6 +265,10 @@ export default function DocEditor({ database }) {
     const handleExportClose = () => setExportOpen(false);
     const [exportOpen, setExportOpen] = useState(false);
 
+    const handleUploadOpen = () => setUploadOpen(true);
+    const handleUploadClose = () => setUploadOpen(false);
+    const [uploadOpen, setUploadOpen] = useState(false);
+
     const handleShareOpen = () => setShareOpen(true);
     const handleShareClose = () => setShareOpen(false);
     const [shareOpen, setShareOpen] = useState(false);
@@ -279,6 +283,16 @@ export default function DocEditor({ database }) {
     //     {id: 2, email:'user03@gmail.com', perm: 'edit'}
     // ];
 
+    const appendContent = (content) => {
+        const newContent = docContent + content;
+        if(newContent != "") {
+            toast.success("Uploaded Content!");
+        }
+        setDocContent(newContent);
+    }
+    const uploadError = (msg) => {
+        toast.error(msg);
+    }
     const getQuillData = (value) => {
         setDocContent(value);
         if (!savePending) {
@@ -602,6 +616,13 @@ export default function DocEditor({ database }) {
                         Export
                 </button>
                 )}
+                {docContent && (<button
+                    className="editor-menu-button"
+                        onClick={handleUploadOpen}
+                >
+                    Upload
+                </button>
+                )}
                 <button 
                 className="editor-menu-button" onClick={handleHomeButton}
                 >
@@ -624,6 +645,8 @@ export default function DocEditor({ database }) {
                 deleteDoc={deleteDocument}
                 exportMD={null}
                 exportPDF={null}
+                append={null}
+                uploadErr={null}
             />
             <Modal
                 open={exportOpen}
@@ -634,6 +657,20 @@ export default function DocEditor({ database }) {
                 deleteDoc={null}
                 exportMD={exportAsMD}
                 exportPDF={exportAsPDF}
+                append={null}
+                uploadErr={null}
+            />
+            <Modal
+                open={uploadOpen}
+                setOpen={setUploadOpen}
+                title={null}
+                setTitle={null}
+                createDoc={null}
+                deleteDoc={null}
+                exportMD={null}
+                exportPDF={null}
+                append={appendContent}
+                uploadErr={uploadError}
             />
 
             <ShareDialog
