@@ -51,17 +51,19 @@ import {transemail, transuid, makeWriter, makeReader, changeOwner} from '../shar
     
 
 function ShareDialog(props) {
-    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn } = props;
+    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn, ogMap } = props;
     
-    var result = []
+    // var result = []
 
-    for (const key in sharedUsers){
-        // console.log("For loop started");
-        // transuid(key).then((email) => result.push(email.concat(": ", emailsIn[key])))
-        const email = String(transuid(key));
-        // result.push(email.concat(": ", sharedUsers[key]))
-        result.push(email)
-    }
+    // for (const key in sharedUsers){
+    //     // console.log("For loop started");
+    //     // transuid(key).then((email) => result.push(email.concat(": ", emailsIn[key])))
+    //     const email = String(transuid(key));
+    //     // result.push(email.concat(": ", sharedUsers[key]))
+    //     result.push(email)
+    // }
+
+    // console.log("Data2: " + JSON.stringify(sharedUsers));
 
     const handleClose = () => {
       onClose();
@@ -77,25 +79,27 @@ function ShareDialog(props) {
 
     const handleAdd = () => {
         const new_email = transemail(user);
-        if(new_email == undefined){alert("Invalid user"); return;}
+        if(new_email === undefined){alert("Invalid user"); return;}
         // if(!makeWriter(emailsIn, new_email)){alert("Document must have an owner"); return;}
         // setShareUsers(emailsIn);
 
         switch(String(permIn)) {
             case 'owner':
-                if(!changeOwner(sharedUsers, new_email)){alert("Document must have an owner"); return;}
+                if(!changeOwner(ogMap, new_email)){alert("Document must have an owner"); return;}
                 break;
             case 'writer':
-                if(!makeWriter(sharedUsers, new_email)){alert("Document must have an owner"); return;}
+                if(!makeWriter(ogMap, new_email)){alert("Document must have an owner"); return;}
                 break;
             case 'reader':
-                if(!makeReader(sharedUsers, new_email)){alert("Document must have an owner"); return;}
+                if(!makeReader(ogMap, new_email)){alert("Document must have an owner"); return;}
                 break;
             default:
-                alert("Set Permission");
+                alert("Set permission");
         }
 
-        setSharedUsers([...sharedUsers, {new_email}]);
+        setSharedUsers([...sharedUsers, {id: new_email, email: user, perm: permIn}]);
+        // setSharedUsers(sharedUsers);
+        // result.push(new_email);
         // setSharedUsers([...sharedUsers, {id: getRandomInt(100), email: user, perm: permIn}]);
         setUser('');
         setPermIn('');
@@ -105,16 +109,18 @@ function ShareDialog(props) {
         const newList = sharedUsers.slice();
         switch(String(value)) {
             case 'owner':
-                if(!changeOwner(sharedUsers, id)){alert("Document must have an owner"); return;}
+                if(!changeOwner(ogMap, id)){alert("Document must have an owner"); return;}
                 break;
             case 'writer':
-                if(!makeWriter(sharedUsers, id)){alert("Document must have an owner"); return;}
+                if(!makeWriter(ogMap, id)){alert("Document must have an owner"); return;}
                 break;
             case 'reader':
-                if(!makeReader(sharedUsers, id)){alert("Document must have an owner"); return;}
+                if(!makeReader(ogMap, id)){alert("Document must have an owner"); return;}
                 break;
             default:
         }
+        const sUsr = sharedUsers.find(x => x.id === id);
+        sUsr.perm = value;
         setSharedUsers(newList);
     };
   
@@ -141,23 +147,23 @@ function ShareDialog(props) {
         
         <DialogContent dividers={true}>
         <List sx={{ pt: 0 }}>
-            {result.map((u) => (
-                <ListItem disableGutters key={transemail(u)}>
+            {sharedUsers.map((u) => (
+                <ListItem disableGutters key={u.id}>
                 <ListItemButton>
                     <ListItemAvatar>
                     <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
                         <PersonIcon />
                     </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={u} sx={{minWidth:'200px'}}/>
+                    <ListItemText primary={u.email} sx={{minWidth:'200px'}}/>
                     <FormControl fullWidth>
                         <InputLabel id="share-select-label">Permission</InputLabel>
                         <Select
                         labelId="share-select-label"
                         id="share-select"
-                        value={sharedUsers[transemail(u)]}
+                        value={u.perm}
                         label="Permission"
-                        onChange={(e) => handlePermChange(e.target.value, transemail(u))}
+                        onChange={(e) => handlePermChange(e.target.value, u.id)}
                         >
                         <MenuItem value={'owner'}>Owner</MenuItem>
                         <MenuItem value={'writer'}>Editor</MenuItem>
@@ -248,8 +254,6 @@ export default function DocEditor({ database }) {
     //     {id: 2, email:'user03@gmail.com', perm: 'edit'}
     // ];
 
-    // const [sharedUsers, setSharedUsers] = useState(data);
-
     const getQuillData = (value) => {
         setDocContent(value);
         if (!savePending) {
@@ -276,7 +280,7 @@ export default function DocEditor({ database }) {
     
     // Function to create the string for the last updated time
     const getTheLastUpdatedString = () => {
-        if ((doclastUpdatedDate == "") && (doclastUpdatedTime == "")) {
+        if ((doclastUpdatedDate === "") && (doclastUpdatedTime === "")) {
             return "";
         }
         const options = {
@@ -438,9 +442,21 @@ export default function DocEditor({ database }) {
         console.log("Finished pdf export function");
     };
 
-    const handleShare = () => {
-        
-    };
+    var data = [];
+    
+    for (const key in shareUsers) {
+        data.push(
+            {id: key, email: String(transuid(key)), perm: String(shareUsers[key])}
+        );
+    }
+
+    const [sharedUsers, setSharedUsers] = useState([]);
+
+    useEffect(() => {
+        setSharedUsers(data);
+      },[data]);
+
+    // console.log("Data1: " + JSON.stringify(data));
 
     // RETURN
     return (
@@ -499,10 +515,11 @@ export default function DocEditor({ database }) {
                 user = {user}
                 setUser = {setUser}
                 onClose={handleShareClose}
-                sharedUsers = {shareUsers}
-                setSharedUsers={setShareUsers}
+                sharedUsers = {sharedUsers}
+                setSharedUsers={setSharedUsers}
                 permIn={permIn}
                 setPermIn={setPermIn}
+                ogMap={shareUsers}
             />
         </div>
     );
