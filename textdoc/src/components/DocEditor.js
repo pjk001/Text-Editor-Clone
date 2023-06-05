@@ -427,35 +427,89 @@ export default function DocEditor({ database }) {
     };
 
     // Export as PDF
-    const pdfExportComponent = useRef(null);
     const exportAsPDF = () => {
         const options = {
             filename: 'document.pdf',
-            html2canvas: { scale: 1 },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
         };
 
         const style = `
-        <style>
-            body {
-            font-family: Helvetica, sans-serif;
-            font-size: 14px;
-            color: #333;
-            padding: 1in;
-            }
-        </style>
-        `;
+    <style>
+      body {
+        font-family: Helvetica, sans-serif;
+        font-size: 12px;
+        color: #333;
+        margin: 1in;
+        letter-spacing: 0.01px;
+      }
+
+      .content {
+        padding: 0.5in;
+      }
+
+      body h1, body h2, body h3, body h4, body h5, body h6 {
+        margin: 1em 0;
+        font-weight: bold;
+      }
+      
+      body h1 {
+      font-size: 28px;
+    }
+
+    body h2 {
+      font-size: 24px;
+    }
+
+    body h3 {
+      font-size: 22px;
+    }
+
+    body h4 {
+      font-size: 18px;
+    }
+
+    body h5 {
+      font-size: 16px;
+    }
+
+    body h6 {
+      font-size: 14px;
+    }
+
+    body ul, ol {
+      margin: 1em 0;
+      padding-left: 1em;
+    }
+
+    body ul li {
+      margin-bottom: 0.5em;
+    }
+
+    body ol li {
+      margin-bottom: 0.5em;
+    }
+    </style>
+  `;
 
         const content = `
-        <html>
-            <head>${style}</head>
-            <body>${docContent}</body>
-        </html>
-        `;
+    <html>
+      <head>${style}</head>
+      <body>
+        <div class="content">${docContent}</div>
+      </body>
+    </html>
+  `;
 
         html2pdf().set(options).from(content).save();
         console.log("Finished pdf export function");
+
+        // Delay before allowing the next export
+        setTimeout(() => {
+            console.log("Ready for the next export");
+        }, 2000); // Adjust the delay time (in milliseconds) as needed
     };
+
 
     
 
