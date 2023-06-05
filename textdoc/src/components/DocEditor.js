@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ReactDOM from "react-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { collection, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, updateDoc, onSnapshot, deleteDoc, setDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -34,6 +34,12 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import {transemail, transuid, makeWriter, makeReader, changeOwner, removeAccess} from '../sharing.js'
+import Markdown from 'marked-react';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import turndown from 'turndown';
+import getIndentLevel from 'turndown';
+
 
 
 
@@ -255,6 +261,14 @@ export default function DocEditor({ database }) {
     const handleClose = () => setOpen(false);
     const [open, setOpen] = useState(false);
 
+    const handleExportOpen = () => setExportOpen(true);
+    const handleExportClose = () => setExportOpen(false);
+    const [exportOpen, setExportOpen] = useState(false);
+
+    const handleUploadOpen = () => setUploadOpen(true);
+    const handleUploadClose = () => setUploadOpen(false);
+    const [uploadOpen, setUploadOpen] = useState(false);
+
     const handleShareOpen = () => setShareOpen(true);
     const handleShareClose = () => setShareOpen(false);
     const [shareOpen, setShareOpen] = useState(false);
@@ -269,6 +283,16 @@ export default function DocEditor({ database }) {
     //     {id: 2, email:'user03@gmail.com', perm: 'edit'}
     // ];
 
+    const appendContent = (content) => {
+        const newContent = docContent + content;
+        if(newContent != "") {
+            toast.success("Uploaded Content!");
+        }
+        setDocContent(newContent);
+    }
+    const uploadError = (msg) => {
+        toast.error(msg);
+    }
     const getQuillData = (value) => {
         setDocContent(value);
         if (!savePending) {
@@ -430,7 +454,7 @@ export default function DocEditor({ database }) {
     const exportAsPDF = () => {
         const options = {
             filename: 'document.pdf',
-            html2canvas: { scale: 2 },
+            html2canvas: { scale: 2.5 },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
         };
 
@@ -500,7 +524,7 @@ export default function DocEditor({ database }) {
       </body>
     </html>
   `;
-
+        console.log(docContent);
         html2pdf().set(options).from(content).save();
         console.log("Finished pdf export function");
 
@@ -529,6 +553,39 @@ export default function DocEditor({ database }) {
 
     // console.log("Data1: " + JSON.stringify(data));
 
+
+// Export as markdown
+
+    const turndownService = new turndown();
+
+    turndownService.addRule('underlineHeaders', {
+    filter: ['h1','h2'],
+        replacement: function (content, node, options) {
+            const headerLevel = node.tagName === 'H1' ? '#' : '##';
+            return headerLevel + ' ' + content + '\n\n';
+        }
+    });
+
+
+    const exportAsMD = () => {
+    const markdownContent = turndownService.turndown(docContent);
+
+    // Sanitize the Markdown content using DOMPurify
+    const sanitizedContent = DOMPurify.sanitize(markdownContent);
+
+    // Create a Blob from the sanitized Markdown content
+    const blob = new Blob([sanitizedContent], { type: 'text/markdown' });
+
+    // Create a download link for the Markdown file
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = 'document.md'; // Specify the filename for the downloaded Markdown file
+
+    // Trigger the file download
+    downloadLink.click();
+    };
+
+
     // RETURN
     return (
         <div>
@@ -541,7 +598,7 @@ export default function DocEditor({ database }) {
                     className="doc-title-input"
                 />
                 <span className="last-update-time">{getTheLastUpdatedString()}</span>
-                <div className="options-container">
+            <div className="options-container">
                 <button 
                     className="editor-menu-button" onClick={handleOpen}
                     >
@@ -554,17 +611,24 @@ export default function DocEditor({ database }) {
                 </button>
                 {docContent && (<button 
                     className="editor-menu-button"
-                    onClick={exportAsPDF}
+                    onClick={handleExportOpen}
                     >
-                        Export as PDF
+                        Export
                 </button>
                 )}
-                 <button 
-                    className="editor-menu-button" onClick={handleHomeButton}
-                    >
-                    Home
+                {docContent && (<button
+                    className="editor-menu-button"
+                        onClick={handleUploadOpen}
+                >
+                    Upload
                 </button>
-                </div>
+                )}
+                <button 
+                className="editor-menu-button" onClick={handleHomeButton}
+                >
+                Home
+            </button>
+            </div>
 
             </div>
 
@@ -579,6 +643,34 @@ export default function DocEditor({ database }) {
                 setTitle={null}
                 createDoc={null}
                 deleteDoc={deleteDocument}
+                exportMD={null}
+                exportPDF={null}
+                append={null}
+                uploadErr={null}
+            />
+            <Modal
+                open={exportOpen}
+                setOpen={setExportOpen}
+                title={null}
+                setTitle={null}
+                createDoc={null}
+                deleteDoc={null}
+                exportMD={exportAsMD}
+                exportPDF={exportAsPDF}
+                append={null}
+                uploadErr={null}
+            />
+            <Modal
+                open={uploadOpen}
+                setOpen={setUploadOpen}
+                title={null}
+                setTitle={null}
+                createDoc={null}
+                deleteDoc={null}
+                exportMD={null}
+                exportPDF={null}
+                append={appendContent}
+                uploadErr={uploadError}
             />
 
             <ShareDialog
