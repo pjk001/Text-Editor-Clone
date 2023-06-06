@@ -329,6 +329,13 @@ export default function DocEditor({ database }) {
         toast.error(msg);
     }
     const getQuillData = (value) => {
+        const userRole = shareUsers[userID];
+        if (userRole === "reader") {
+            // alert("You do NOT have editing permissions.");
+            errorAnnouncement("You do not have editing permissions.")
+            getData(); // Need to check if this will also unsubscribe the data
+            return;
+        }
         setDocContent(value);
         if (!savePending) {
             setSavePending(true);
@@ -409,13 +416,6 @@ export default function DocEditor({ database }) {
     useEffect(() => {
         let debounceTimer;
         if (savePending) {
-            const userRole = shareUsers[userID];
-            if (userRole === "reader") {
-                // alert("You do NOT have editing permissions.");
-                errorAnnouncement("You do not have editing permissions.")
-                getData(); // Need to check if this will also unsubscribe the data
-                return;
-            }
             debounceTimer = setTimeout(() => {
                 const currDate = new Date().toLocaleDateString();
                 const currTime = new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
