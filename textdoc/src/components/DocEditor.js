@@ -321,14 +321,22 @@ export default function DocEditor({ database }) {
 
     const appendContent = (content) => {
         const newContent = docContent + content;
+        const userRole = shareUsers[userID];
+        if (userRole === "reader") {
+            errorAnnouncement("You do not have editing permissions.")
+            getData();
+            return;
+        }
         if(newContent != "") {
             toast.success("Uploaded Content!");
         }
         setDocContent(newContent);
     }
+
     const errorAnnouncement = (msg) => {
         toast.error(msg);
     }
+
     var flag = true; //User for getQuillData, but shouldn't be set to true every time
     const getQuillData = (value) => {
         console.log("Quill data");
@@ -491,8 +499,17 @@ export default function DocEditor({ database }) {
 
     // Changing the title
     const titleChange = (newTitle) => {
+        const userRole = shareUsers[userID];
+        if (userRole === "reader") {
+            // alert("You do NOT have editing permissions.");
+            errorAnnouncement("You do not have editing permissions.")
+            getData(); // Need to check if this will also unsubscribe the data
+            return;
+        }
         setTitle(newTitle);
         const targetDoc = doc(collectionRef, params.id);
+        const currDate = new Date().toLocaleDateString();
+        const currTime = new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
         updateDoc(targetDoc, {
             title: newTitle,
         })
@@ -504,6 +521,8 @@ export default function DocEditor({ database }) {
                     autoClose: 2000,
                 });
             });
+        setLastUpdatedDate(currDate);
+        setLastUpdatedTime(currTime);
     };
 
     const shareChange = (newUsers) => {
@@ -671,7 +690,6 @@ export default function DocEditor({ database }) {
                     onChange={(e) => titleChange(e.target.value)}
                     className="doc-title-input"
                 />
-                {/* <span className="last-update-time">{getTheLastUpdatedString()}</span> */}
             <div className="options-container">
                 <span className="last-update-time">{getTheLastUpdatedString()}</span>
                 <button 
