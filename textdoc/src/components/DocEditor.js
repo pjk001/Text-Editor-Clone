@@ -42,7 +42,7 @@ import getIndentLevel from 'turndown';
     
 // Pop-up for list of shared users
 function ShareDialog(props) {
-    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn, ogMap, shareChange } = props;
+    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn, ogMap, shareChange, owner, setOwner } = props;
 
     const handleClose = () => {
       onClose();
@@ -56,13 +56,22 @@ function ShareDialog(props) {
         const new_email = transemail(user);
         if(new_email === undefined){alert("Invalid user"); return;}
 
+        var ownerChange = new Boolean(false);
+        const newList = [];
+
         switch(String(permIn)) {
             case 'owner':
                 const o_error = changeOwner(ogMap, new_email)
                 if(o_error == 1){alert("Document must have an owner"); return;}
                 if(o_error == 2){alert("insufficient permissions"); return;}
-                const owner = sharedUsers.find(x => x.perm === 'owner');
+                ownerChange = true;
+                // const owner = sharedUsers.find(x => x.perm === 'owner');
                 owner.perm = 'writer';
+                newList = sharedUsers.slice();
+                const newOwner = newList.splice(newList.findIndex(x => x.id === new_email), 1);
+                newOwner.perm = 'owner';
+                newList.push(owner);
+                setOwner(newOwner);
                 break;
             case 'writer':
                 const w_error = makeWriter(ogMap, new_email)
@@ -78,8 +87,11 @@ function ShareDialog(props) {
             default:
                 alert("Set permission");
         }
-
-        setSharedUsers([...sharedUsers, {id: new_email, email: user, perm: permIn}]);
+        if (ownerChange) {
+            setSharedUsers(newList);
+        } else {
+            setSharedUsers([...sharedUsers, {id: new_email, email: user, perm: permIn}]);
+        }
         shareChange(ogMap);
         setUser('');
         setPermIn('');
@@ -87,13 +99,19 @@ function ShareDialog(props) {
 
     const handlePermChange = (value, id) => {
         const newList = sharedUsers.slice();
+        var ownerChange = new Boolean(false);
         switch(String(value)) {
             case 'owner':
                 const o_error = changeOwner(ogMap, id)
                 if(o_error == 1){alert("Document must have an owner"); return;}
                 if(o_error == 2){alert("insufficient permissions"); return;}
-                const owner = newList.find(x => x.perm === 'owner');
+                // const owner = newList.find(x => x.perm === 'owner');
+                ownerChange = true;
                 owner.perm = 'writer';
+                const newOwner = newList.splice(newList.findIndex(x => x.id === id), 1);
+                newOwner.perm = 'owner';
+                newList.push(owner);
+                setOwner(newOwner);
                 break;
             case 'writer':
                 const w_error = makeWriter(ogMap, id)
@@ -116,8 +134,10 @@ function ShareDialog(props) {
                 return;
             default:
         }
-        const sUsr = newList.find(x => x.id === id);
-        sUsr.perm = value;
+        if (!ownerChange) {
+            const sUsr = newList.find(x => x.id === id);
+            sUsr.perm = value;
+        }
         setSharedUsers(newList);
         shareChange(ogMap);
     };
@@ -145,6 +165,31 @@ function ShareDialog(props) {
         
         <DialogContent dividers={true}>
         <List sx={{ pt: 0 }}>
+            <ListItem disableGutters key={owner.id}>
+                <ListItemButton>
+                    <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
+                        <PersonIcon />
+                    </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={owner.email} class="share-user-text"/>
+                    <FormControl fullWidth>
+                        <InputLabel id="share-select-label">Permission</InputLabel>
+                        <Select
+                        labelId="share-select-label"
+                        id="share-select"
+                        value={owner.perm}
+                        label="Permission"
+                        onChange={(e) => handlePermChange(e.target.value, owner.id)}
+                        >
+                        <MenuItem value={'owner'}>Owner</MenuItem>
+                        <MenuItem value={'writer'}>Editor</MenuItem>
+                        <MenuItem value={'reader'}>Viewer</MenuItem>
+                        <MenuItem value={'del'}>Remove User</MenuItem>
+                        </Select>
+                    </FormControl>
+                </ListItemButton>
+            </ListItem>
             {sharedUsers.map((u) => (
                 <ListItem disableGutters key={u.id}>
                 <ListItemButton>
@@ -153,7 +198,7 @@ function ShareDialog(props) {
                         <PersonIcon />
                     </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={u.email} className='share-user-text'/>
+                    <ListItemText primary={u.email} class="share-user-text"/>
                     <FormControl fullWidth>
                         <InputLabel id="share-select-label">Permission</InputLabel>
                         <Select
@@ -162,7 +207,6 @@ function ShareDialog(props) {
                         value={u.perm}
                         label="Permission"
                         onChange={(e) => handlePermChange(e.target.value, u.id)}
-                        sx = {{float: 'right'}}
                         >
                         <MenuItem value={'owner'}>Owner</MenuItem>
                         <MenuItem value={'writer'}>Editor</MenuItem>
@@ -224,6 +268,8 @@ function ShareDialog(props) {
     setPermIn: PropTypes.func.isRequired,
     ogMap: PropTypes.any.isRequired,
     shareChange: PropTypes.func.isRequired,
+    owner: PropTypes.any.isRequired,
+    setOwner: PropTypes.func.isRequired,
   };
 
 export default function DocEditor({ database }) {
@@ -553,17 +599,22 @@ export default function DocEditor({ database }) {
     // Convert shareUsers, an associative array, to sharedUsers, a normal array
     // This will make it easier to do real-time updates
     const [sharedUsers, setSharedUsers] = useState([]);
+    const [owner, setOwner] = useState('');
 
     useEffect(() => {
         var data = [];
     
         for (const key in shareUsers) {
-            data.push(
-                {id: key, email: String(transuid(key)), perm: String(shareUsers[key])}
-            );
+            if (shareUsers[key] === "owner") {
+                setOwner({id: key, email: String(transuid(key)), perm: String(shareUsers[key])});
+            } else {
+                data.push(
+                    {id: key, email: String(transuid(key)), perm: String(shareUsers[key])}
+                );
+            }
         }
         setSharedUsers(data);
-        setSharedUsers(data);
+        // setSharedUsers(data);
       },[shareUsers]);
 
 
@@ -698,6 +749,8 @@ export default function DocEditor({ database }) {
                 setPermIn = {setPermIn}
                 ogMap = {shareUsers}
                 shareChange = {shareChange}
+                owner = {owner}
+                setOwner = {setOwner}
             />
         </div>
     );
