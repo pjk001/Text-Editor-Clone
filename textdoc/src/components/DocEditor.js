@@ -9,9 +9,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './custom-quill.css';
 import Modal from './Modal';
-// import jsPDF from 'jspdf';
-// import { PDFExport } from 'react-html2pdf';
-// import { Preview, print } from 'react-html2pdf';
 import html2pdf from 'html2pdf.js';
 
 import PropTypes from 'prop-types';
@@ -34,11 +31,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { transemail, transuid, makeWriter, makeReader, changeOwner, removeAccess } from '../sharing.js'
-import Markdown from 'marked-react';
-import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import turndown from 'turndown';
-import getIndentLevel from 'turndown';
     
 // Pop-up for list of shared users
 function ShareDialog(props) {
@@ -466,10 +460,10 @@ export default function DocEditor({ database }) {
     // Warn user when leaving with unsaved changes
     useEffect(() => {
         const handleBeforeUnload = (event) => {
-            // if (savePending) {
-            //     event.preventDefault();
+            if (savePending) {
+                event.preventDefault();
                 event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-            // }
+            }
         };
 
         window.onbeforeunload = handleBeforeUnload;
@@ -542,8 +536,9 @@ export default function DocEditor({ database }) {
 
     // Export as PDF
     const exportAsPDF = () => {
+        const fileName = docTitle+'.pdf';
         const options = {
-            filename: 'document.pdf',
+            filename: fileName,
             html2canvas: { scale: 2.5 },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
         };
@@ -621,11 +616,9 @@ export default function DocEditor({ database }) {
         // Delay before allowing the next export
         setTimeout(() => {
             console.log("Ready for the next export");
-        }, 2000); // Adjust the delay time (in milliseconds) as needed
+        }, 2000); 
     };
 
-    // Convert shareUsers, an associative array, to sharedUsers, a normal array
-    // This will make it easier to do real-time updates
     const [sharedUsers, setSharedUsers] = useState([]);
     const [owner, setOwner] = useState('');
 
@@ -642,7 +635,6 @@ export default function DocEditor({ database }) {
             }
         }
         setSharedUsers(data);
-        // setSharedUsers(data);
       },[shareUsers]);
 
 
@@ -663,18 +655,16 @@ export default function DocEditor({ database }) {
     const exportAsMD = () => {
         const markdownContent = turndownService.turndown(docContent);
 
-        // Sanitize the Markdown content using DOMPurify
         const sanitizedContent = DOMPurify.sanitize(markdownContent);
 
-        // Create a Blob from the sanitized Markdown content
         const blob = new Blob([sanitizedContent], { type: 'text/markdown' });
 
-        // Create a download link for the Markdown file
+        // make download link for Markdown file
         const downloadLink = document.createElement('a');
         downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = 'document.md'; // Specify the filename for the downloaded Markdown file
+        const fileName = docTitle+'.md';
+        downloadLink.download = fileName;
 
-        // Trigger the file download
         downloadLink.click();
     };
 

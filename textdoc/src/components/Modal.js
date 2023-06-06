@@ -15,7 +15,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    bgcolor: 'background.paper',
+    bgcolor: 'rgba(250, 250, 250, 1)',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
@@ -48,7 +48,7 @@ export default function ModalComponent({
             const fileContent = reader.result;
 
             let processedContent;
-            if (isMarkdown(fileContent)) {
+            if (file.type=='text/markdown') {
                 processedContent = convertMarkdownToHTML(fileContent);
             } else {
                 processedContent = convertPlainTextToHTML(fileContent);
@@ -60,26 +60,17 @@ export default function ModalComponent({
         reader.readAsText(file);
     };
 
-    const isMarkdown = (content) => {
-        // Check if the content starts with a markdown header
-        return content.trim().startsWith('#');
-    };
-
     const convertMarkdownToHTML = (markdown) => {
-        // Convert markdown to HTML using your preferred markdown library
-        // Replace this with your actual implementation
-        // Example using the 'marked' library
         const htmlContent = marked(markdown);
         return htmlContent;
     };
 
     const convertPlainTextToHTML = (plainText) => {
-        // Split the plain text into lines
+        // Put each line into a paragraph
         const lines = plainText.split('\n');
-        // Convert each line to a separate paragraph
         const paragraphs = lines.map((line) => `<p>${line}</p>`);
-        // Join the paragraphs together and return as HTML content
         const htmlContent = paragraphs.join('');
+
         return htmlContent;
     };
 
@@ -144,7 +135,7 @@ export default function ModalComponent({
                     aria-describedby="modal-modal-description"
                 >
 
-                    <Box sx={{ ...style, backgroundColor: 'rgba(255, 255, 255, 0.4)', border: 'none', borderRadius: '12px' }}>
+                    <Box sx={{ ...style, backgroundColor: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '12px' }}>
                         <div className="delete-container">
                             <body className="confirmation-message" style={{ opacity: 0.7, borderRadius: '12px' }}>
                                 Choose Output Type
@@ -168,7 +159,7 @@ export default function ModalComponent({
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Box sx={{ ...style, backgroundColor: 'rgba(255, 255, 255, 0.4)', border: 'none', borderRadius: '12px' }}>
+                    <Box sx={{ ...style, backgroundColor: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '12px' }}>
                         <div className="delete-container">
                             <body className="confirmation-message" style={{ opacity: 0.7, borderRadius: '12px' }}>
                                 Upload content (Will be appended)
