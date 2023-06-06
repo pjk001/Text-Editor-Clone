@@ -671,8 +671,9 @@ export default function DocEditor({ database }) {
                     onChange={(e) => titleChange(e.target.value)}
                     className="doc-title-input"
                 />
-                <span className="last-update-time">{getTheLastUpdatedString()}</span>
+                {/* <span className="last-update-time">{getTheLastUpdatedString()}</span> */}
             <div className="options-container">
+                <span className="last-update-time">{getTheLastUpdatedString()}</span>
                 <button 
                     className="editor-menu-button" onClick={handleOpen}
                     >

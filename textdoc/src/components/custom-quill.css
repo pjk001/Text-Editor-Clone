@@ -72,6 +72,9 @@
   background-color: transparent;
   display: flex;
   opacity: 0.75;
+  white-space: nowrap;
+  margin-top: 20px;
+  margin-right: 20px;
 }
 
 .editor-menu-button {
@@ -105,6 +108,10 @@
   display: flex;
   z-index: 2;
   margin-right: 65px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 550px;
 }
 
 .doc-title-input:hover {
