@@ -58,15 +58,22 @@ function ShareDialog(props) {
 
         switch(String(permIn)) {
             case 'owner':
-                if(!changeOwner(ogMap, new_email)){alert("Document must have an owner"); return;}
+                const o_error = changeOwner(ogMap, new_email)
+                if(o_error == 1){alert("Document must have an owner"); return;}
+                if(o_error == 2){alert("insufficient permissions"); return;}
                 const owner = sharedUsers.find(x => x.perm === 'owner');
                 owner.perm = 'writer';
                 break;
             case 'writer':
-                if(!makeWriter(ogMap, new_email)){alert("Document must have an owner"); return;}
+                const w_error = makeWriter(ogMap, new_email)
+                if(w_error == 1){alert("Document must have an owner"); return;}
+                if(w_error == 2){alert("insufficient permissions"); return;}
+
                 break;
             case 'reader':
-                if(!makeReader(ogMap, new_email)){alert("Document must have an owner"); return;}
+                const r_error = makeReader(ogMap, new_email)
+                if(r_error == 1){alert("Document must have an owner"); return;}
+                if(r_error == 2){alert("insufficient permissions"); return;}
                 break;
             default:
                 alert("Set permission");
@@ -82,18 +89,27 @@ function ShareDialog(props) {
         const newList = sharedUsers.slice();
         switch(String(value)) {
             case 'owner':
-                if(!changeOwner(ogMap, id)){alert("Document must have an owner"); return;}
+                const o_error = changeOwner(ogMap, id)
+                if(o_error == 1){alert("Document must have an owner"); return;}
+                if(o_error == 2){alert("insufficient permissions"); return;}
                 const owner = newList.find(x => x.perm === 'owner');
                 owner.perm = 'writer';
                 break;
             case 'writer':
-                if(!makeWriter(ogMap, id)){alert("Document must have an owner"); return;}
+                const w_error = makeWriter(ogMap, id)
+                if(w_error == 1){alert("Document must have an owner"); return;}
+                if(w_error == 2){alert("insufficient permissions"); return;}
                 break;
             case 'reader':
-                if(!makeReader(ogMap, id)){alert("Document must have an owner"); return;}
+                const r_error = makeReader(ogMap, id)
+                if(r_error == 1){alert("Document must have an owner"); return;}
+                if(r_error == 2){alert("insufficient permissions"); return;}
                 break;
             case 'del':
-                if(!removeAccess(ogMap, id)){alert("Document must have an owner"); return;}
+                console.log("Trying to remove")
+                const rem_error = removeAccess(ogMap, id)
+                if(rem_error == 1){alert("Document must have an owner"); return;}
+                if(rem_error == 2){alert("insufficient permissions"); return;}
                 newList.splice(newList.findIndex(x => x.id === id), 1);
                 setSharedUsers(newList);
                 shareChange(ogMap);

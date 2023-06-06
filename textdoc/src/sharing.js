@@ -8,12 +8,16 @@ import { DocumentSnapshot, addDoc, collection, getFirestore, onSnapshot } from '
 
 import { doc, setDoc, getDoc } from "firebase/firestore"; 
 import {app, database} from "./firebaseConfig.js"
+import { getAuth } from 'firebase/auth';
 
 
 var uidemailmap = {};
 
-
+var auth = getAuth();
+var cuser = auth.currentUser
 export async function AddUser(user){
+	auth = getAuth();
+	cuser = auth.currentUser
 	const docRef = doc(database, "users", "Users");
 	const docSnap = await getDoc(docRef);
 	const map = docSnap.data().uidemail;
@@ -44,28 +48,46 @@ export function transuid(uid){
 
 
 export function makeWriter(roles, user){
-	if(roles[user] === "owner"){return false;}
+	// const auth = getAuth();
+	// const cuser = auth.currentUser
+	if(roles[cuser.uid] !== "owner"){return 2;}
+	if(roles[user] === "owner"){return 1;}
 	roles[user] = "writer";
-	return true;
+	return 0;
 }
 
 export function makeReader(roles, user){
-	if(roles[user] === "owner"){return false;}
+	// const auth = getAuth();
+	// const cuser = auth.currentUser
+	if(roles[cuser.uid] !== "owner"){return 2;}
+	if(roles[user] === "owner"){return 1;}
 	roles[user] = "reader";
-	return true;
+	return 0;
 }
 
 export function removeAccess(roles, user){
-	if(roles[user] === "owner"){return false;}
-	if(!(user in roles)){return false;}
+	console.log("Remove access")
+
+	if(roles[cuser.uid] !== "owner" && cuser.uid !== user){
+		console.log("Remove access")
+		console.log(cuser.uid !== user)
+		console.log(cuser.uid)
+		console.log(user)
+		return 2;
+	}
+	if(roles[user] === "owner"){return 1;}
+	if(!(user in roles)){return 3;}
 	delete roles[user];
-	return true;
+	return 0;
 }
 
 export function changeOwner(roles, user){
+	// const auth = getAuth();
+	// const cuser = auth.currentUser
+	if(roles[cuser.uid] !== "owner"){return 2;}
 	const owner = Object.keys(roles).find(key => roles[key] === "owner");
 	// delete roles[owner];
 	roles[owner] = "writer";
 	roles[user] = "owner";
-	return true;
+	return 0;
 }
