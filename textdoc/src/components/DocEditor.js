@@ -274,7 +274,8 @@ function ShareDialog(props) {
 
 export default function DocEditor({ database }) {
     const auth = getAuth();
-    const userID = auth.currentUser.uid;
+    var userID;
+    if(auth.currentUser){userID = auth.currentUser.uid;}
     console.log("here is the user's userID: ", userID);
 
     const isMounted = useRef();

@@ -9,23 +9,26 @@ import { auth, app } from "../firebaseConfig"
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function Home({database}) {
+    let navigate = useNavigate();
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-    if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/auth.user
-    const uid = user.uid;
-    console.log("here is the 1st user uid: ", uid);
-    // ...
-    } else {
-    // User is signed out
-    // ...
-    }
+    // if (user) {
+    // // User is signed in, see docs for a list of available properties
+    // // https://firebase.google.com/docs/reference/js/auth.user
+    // const uid = user.uid;
+    // console.log("here is the 1st user uid: ", uid);
+    // // ...
+    // } else {
+    // // User is signed out
+    // // ...
+    // }
     });
     //Sets user to be the currently signed in user.
     //If nobody is signed in, it's set to.
     const user = auth.currentUser;
-    const userID = user.uid;
+    var userID;
+    if(user){userID = user.uid;}
+    else{navigate("/login");}
     console.log("here is the user's userID: ", userID);
 
 
@@ -61,15 +64,17 @@ export default function Home({database}) {
     const handleClose = () => setOpen(false);
     const collectionRef = collection(database, 'docInfo');
     // const collectionRef = collection(database, userID);
-    let navigate = useNavigate();
     var roles = {};
-    roles[user.uid] = "owner";
+    
 
     const createDoc = () => {
+        let auth = getAuth();
+        let user = auth.currentUser
 //The roles field contains the data on who can access and edit it.
 //Owners have full control over the document (including permissions), 
 //writers can read and edit, readers have read-only access.
         if(user){
+            roles[user.uid] = "owner";
             addDoc(collectionRef, {
                 title: title,
                 lastUpdatedDate: "",
