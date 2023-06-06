@@ -31,7 +31,7 @@ export default function ModalComponent({
     exportPDF,
     exportMD,
     append,
-    uploadErr
+    uploadErr,
 }) {
     const handleClose = () => setOpen(false);
 
@@ -129,7 +129,7 @@ export default function ModalComponent({
                                 Yes
                             </button>
                             <button className="cancel-option" onClick={handleClose}>
-                                No
+                                Cancel
                             </button>
                         </div>
                     </Box>
@@ -173,7 +173,7 @@ export default function ModalComponent({
                             <body className="confirmation-message" style={{ opacity: 0.7, borderRadius: '12px' }}>
                                 Upload content (Will be appended)
                             </body>
-                            <input type="file" id="fileInput" onChange={handleUpload} />
+                            <input type="file" id="fileInput" onChange={handleUpload} style={{ marginTop: '15px', fontSize: '17px' }}/>
                             
                         </div>
                     </Box>

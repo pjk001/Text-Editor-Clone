@@ -263,7 +263,7 @@ export default function DocEditor({ database }) {
         }
         setDocContent(newContent);
     }
-    const uploadError = (msg) => {
+    const errorAnnouncement = (msg) => {
         toast.error(msg);
     }
     const getQuillData = (value) => {
@@ -345,20 +345,12 @@ export default function DocEditor({ database }) {
 
     // Save data with debounce
     useEffect(() => {
-        // const targetDoc = doc(collectionRef, params.id);
-        // const rolesMap = targetDoc.roles;
-        // const userRole = rolesMap[userID];
-        // if (userRole === "reader") {
-        //     alert("You do NOT have editing permissions.");
-        //     return;
-        // }
-
-
         let debounceTimer;
         if (savePending) {
             const userRole = shareUsers[userID];
             if (userRole === "reader") {
-                alert("You do NOT have editing permissions.");
+                // alert("You do NOT have editing permissions.");
+                errorAnnouncement("You do not have editing permissions.")
                 getData(); // Need to check if this will also unsubscribe the data
                 return;
             }
@@ -368,6 +360,7 @@ export default function DocEditor({ database }) {
                 const targetDoc = doc(collectionRef, params.id);
 
                 console.log(shareUsers);
+                
                 updateDoc(targetDoc, {
                     body: docContent,
                     lastUpdatedDate: currDate,
@@ -675,7 +668,7 @@ export default function DocEditor({ database }) {
                 exportMD={null}
                 exportPDF={null}
                 append={appendContent}
-                uploadErr={uploadError}
+                uploadErr={errorAnnouncement}
             />
 
             <ShareDialog
