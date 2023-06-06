@@ -329,11 +329,19 @@ export default function DocEditor({ database }) {
     const errorAnnouncement = (msg) => {
         toast.error(msg);
     }
+    var flag = true; //User for getQuillData, but shouldn't be set to true every time
     const getQuillData = (value) => {
+        console.log("Quill data");
         const userRole = shareUsers[userID];
         if (userRole === "reader") {
+            setTimeout(function(){
+                flag = true
+            }, 100);
             // alert("You do NOT have editing permissions.");
-            errorAnnouncement("You do not have editing permissions.")
+            if(flag){
+                errorAnnouncement("You do not have editing permissions.")
+                flag = false;
+            }
             getData(); // Need to check if this will also unsubscribe the data
             return;
         }
