@@ -1,5 +1,6 @@
 import { useState, useEffect, React, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+// import ReactDOM from "react-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, doc, getDoc, updateDoc, onSnapshot, deleteDoc, setDoc } from 'firebase/firestore';
@@ -8,6 +9,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './custom-quill.css';
 import Modal from './Modal';
+// import jsPDF from 'jspdf';
+// import { PDFExport } from 'react-html2pdf';
+// import { Preview, print } from 'react-html2pdf';
 import html2pdf from 'html2pdf.js';
 
 import PropTypes from 'prop-types';
@@ -133,7 +137,7 @@ function ShareDialog(props) {
                         <PersonIcon />
                     </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={u.email} className="share-user-text"/>
+                    <ListItemText primary={u.email} className='share-user-text'/>
                     <FormControl fullWidth>
                         <InputLabel id="share-select-label">Permission</InputLabel>
                         <Select
@@ -142,6 +146,7 @@ function ShareDialog(props) {
                         value={u.perm}
                         label="Permission"
                         onChange={(e) => handlePermChange(e.target.value, u.id)}
+                        sx = {{float: 'right'}}
                         >
                         <MenuItem value={'owner'}>Owner</MenuItem>
                         <MenuItem value={'writer'}>Editor</MenuItem>
@@ -243,6 +248,14 @@ export default function DocEditor({ database }) {
     const [user, setUser] = useState('');
     const [permIn, setPermIn] = useState('');
 
+    // const [sharedUsers, setSharedUsers] = useState([]);
+
+    // const data = [
+    //     {id: 0, email:'username@gmail.com', perm: 'owner'}, 
+    //     {id: 1, email:'user02@gmail.com', perm: 'view'},
+    //     {id: 2, email:'user03@gmail.com', perm: 'edit'}
+    // ];
+
     const appendContent = (content) => {
         const newContent = docContent + content;
         if(newContent != "") {
@@ -332,13 +345,29 @@ export default function DocEditor({ database }) {
 
     // Save data with debounce
     useEffect(() => {
+        // const targetDoc = doc(collectionRef, params.id);
+        // const rolesMap = targetDoc.roles;
+        // const userRole = rolesMap[userID];
+        // if (userRole === "reader") {
+        //     alert("You do NOT have editing permissions.");
+        //     return;
+        // }
+
+
         let debounceTimer;
         if (savePending) {
+            const userRole = shareUsers[userID];
+            if (userRole === "reader") {
+                alert("You do NOT have editing permissions.");
+                getData(); // Need to check if this will also unsubscribe the data
+                return;
+            }
             debounceTimer = setTimeout(() => {
-                const targetDoc = doc(collectionRef, params.id);
                 const currDate = new Date().toLocaleDateString();
                 const currTime = new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+                const targetDoc = doc(collectionRef, params.id);
 
+                console.log(shareUsers);
                 updateDoc(targetDoc, {
                     body: docContent,
                     lastUpdatedDate: currDate,
@@ -413,7 +442,6 @@ export default function DocEditor({ database }) {
             });
     };
 
-    // Updates roles when the shared user settings change
     const shareChange = (newUsers) => {
         const targetDoc = doc(collectionRef, params.id);
         updateDoc(targetDoc, {
@@ -423,7 +451,7 @@ export default function DocEditor({ database }) {
                 showSaveToast();
             })
             .catch(() => {
-                toast.error('Unable To Update Shared Users', {
+                toast.error('Unable To Update Title', {
                     autoClose: 2000,
                 });
             });

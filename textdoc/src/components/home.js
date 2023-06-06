@@ -86,13 +86,32 @@ export default function Home({database}) {
         }
     }
 
+
     const getDoc = () => {
         onSnapshot(collectionRef, (data) => {
-            setDocsData(data.docs.map((doc) => {
-                return {...doc.data(), id: doc.id};
-            }));
+          const thefilteredDocs = data.docs
+            .map((doc) => {
+              const rolesMap = doc.data().roles; // rolesMap is now a copy of the roles map for the document
+              const userRole = rolesMap[userID];
+              if (userRole === "owner" || userRole === "writer" || userRole === "reader") {
+                return { ...doc.data(), id: doc.id };
+              } else {
+                return null; // Exclude documents where the user does not have "owner" or "reader" role
+              }
+            })
+            .filter((doc) => doc !== null); // Remove null values from the array
+      
+          setDocsData(thefilteredDocs);
         });
-    }
+      };
+
+    // const getDoc = () => {
+    //     onSnapshot(collectionRef, (data) => {
+    //         setDocsData(data.docs.map((doc) => {
+    //             return {...doc.data(), id: doc.id};
+    //         }));
+    //     });
+    // }
 
     const isMounted = useRef();
 
