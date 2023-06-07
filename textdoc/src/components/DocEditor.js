@@ -699,7 +699,7 @@ export default function DocEditor({ database }) {
                         Export
                 </button>
                 )}
-                {docContent && (<button
+                {(<button
                     className="editor-menu-button"
                         onClick={handleUploadOpen}
                 >
