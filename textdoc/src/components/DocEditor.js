@@ -1,6 +1,5 @@
 import { useState, useEffect, React, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// import ReactDOM from "react-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, doc, getDoc, updateDoc, onSnapshot, deleteDoc, setDoc } from 'firebase/firestore';
@@ -305,14 +304,6 @@ export default function DocEditor({ database }) {
     const handleShareClose = () => setShareOpen(false);
     const [user, setUser] = useState('');
     const [permIn, setPermIn] = useState('');
-
-    // const [sharedUsers, setSharedUsers] = useState([]);
-
-    // const data = [
-    //     {id: 0, email:'username@gmail.com', perm: 'owner'}, 
-    //     {id: 1, email:'user02@gmail.com', perm: 'view'},
-    //     {id: 2, email:'user03@gmail.com', perm: 'edit'}
-    // ];
 
     const appendContent = (content) => {
         const newContent = docContent + content;
@@ -723,9 +714,6 @@ export default function DocEditor({ database }) {
             <Modal
                 open={open}
                 setOpen={setOpen}
-                title={null}
-                setTitle={null}
-                createDoc={null}
                 deleteDoc={deleteDocument}
                 exportMD={null}
                 exportPDF={null}
@@ -735,9 +723,6 @@ export default function DocEditor({ database }) {
             <Modal
                 open={exportOpen}
                 setOpen={setExportOpen}
-                title={null}
-                setTitle={null}
-                createDoc={null}
                 deleteDoc={null}
                 exportMD={exportAsMD}
                 exportPDF={exportAsPDF}
@@ -747,9 +732,6 @@ export default function DocEditor({ database }) {
             <Modal
                 open={uploadOpen}
                 setOpen={setUploadOpen}
-                title={null}
-                setTitle={null}
-                createDoc={null}
                 deleteDoc={null}
                 exportMD={null}
                 exportPDF={null}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Modal from './Modal';
 import { ToastContainer, toast } from 'react-toastify';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -7,6 +6,40 @@ import { create } from '@mui/material/styles/createTransitions';
 
 import { auth, app } from "../firebaseConfig"
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
+import { Dialog, TextField } from '@mui/material';
+import PropTypes from 'prop-types';
+
+function TitleDialog(props) {
+    const { onClose, open, title, setTitle, createDoc } = props;
+
+    return (
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+            <TextField
+            margin="normal"
+            id="title"
+            label="Title"
+            variant="outlined"
+            onChange={(event) => setTitle(event.target.value)}
+            value={title}
+            type="text"
+            sx={{width: '95%', margin: 'auto', marginTop: '20px'}}
+            />
+            <div className="button-container">
+                <button className="create-doc" onClick={createDoc}>
+                    Add
+                </button>
+            </div>
+        </Dialog>
+    );
+}
+
+TitleDialog.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    title: PropTypes.string.isRequired,
+    setTitle: PropTypes.func.isRequired,
+    createDoc: PropTypes.func.isRequired,
+};
 
 export default function Home({database}) {
     let navigate = useNavigate();
@@ -83,10 +116,12 @@ export default function Home({database}) {
             })
             .then(() => {
                 toast.success('Document Created');
+                setTitle('');
                 handleClose();
             })
             .catch(() => {
                 toast.error('Cannot Create Document');
+                setTitle('');
             });
         }
     }
@@ -192,7 +227,7 @@ export default function Home({database}) {
                             key={doc.id} 
                             className={`doc-grid-child ${isFiltering ? 'filtering' : ''}`}
                             onClick={() => getID(doc.id)}>
-                            <p>{doc.title}</p>
+                            <div className='doc-title'>{doc.title}</div>
                             <div dangerouslySetInnerHTML={{ __html: doc.docContent ? (doc.docContent.length > 60 ? doc.docContent.substring(0,60) + '...' : doc.docContent) : '...' }} style={{ color: 'white', fontWeight: 'bold' }} />
                             <p className='doc-date'> {doc.lastUpdatedDate !== '' ? `Last Updated: ${doc.lastUpdatedDate}` : 'No Edits'} </p>
                             <div className='doc-content'>
@@ -203,14 +238,13 @@ export default function Home({database}) {
             )}
             </div>
 
-            <Modal
+            <TitleDialog 
                 open={open}
-                setOpen={setOpen}
+                onClose={handleClose}
                 title={title}
                 setTitle={setTitle}
                 createDoc={createDoc}
-                deleteDoc={null}
-            />            
+            />         
 
         </div>
     );

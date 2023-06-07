@@ -24,9 +24,6 @@ const style = {
 export default function ModalComponent({
     open,
     setOpen,
-    title,
-    setTitle,
-    createDoc,
     deleteDoc,
     exportPDF,
     exportMD,
@@ -77,31 +74,6 @@ export default function ModalComponent({
 
     return (
         <div>
-            {createDoc && (
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style}>
-                        <input
-                            placeholder="Add the Title"
-                            className="add-input"
-                            onChange={(event) => setTitle(event.target.value)}
-                            value={title}
-                        />
-                        <div className="button-container">
-                            <button className="create-doc" onClick={createDoc}>
-                                Add
-                            </button>
-                        </div>
-                    </Box>
-                </Modal>
-            )}
-
-
-
             {deleteDoc && (
                 <Modal
                     open={open}

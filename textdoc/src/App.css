@@ -155,7 +155,6 @@ body {
   outline: none;
   border: 1px solid #ffc107;
   border-radius: 0;
-  padding: 10px;
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
   transition: border-color 0.3s ease;
@@ -187,7 +186,8 @@ body {
 .doc-grid-child {
   position: relative;
   padding: 20px;
-  background-color: #4c4c4c;
+  /* background-color: #4c4c4c; */
+  background-color: #00808e;
   width: 300px;
   cursor: pointer;
   border-radius: 4px;
@@ -205,6 +205,9 @@ body {
   color: #ffc107;
   margin-bottom: 10px;
   transition: color 0.3s ease;
+  font-weight: bold;
+  border-bottom: 1px solid #ffc107;
+  padding-bottom: 5px;
 }
 
 .doc-grid-child:hover .doc-title {
