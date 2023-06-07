@@ -36,8 +36,8 @@ import turndown from 'turndown';
     
 // Pop-up for list of shared users
 function ShareDialog(props) {
-    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn, ogMap, shareChange, owner, setOwner } = props;
-
+    const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn, ogMap, shareChange, owner, setOwner, errorAnnouncement } = props;
+    let navigate = useNavigate()
     const handleClose = () => {
       onClose();
     };
@@ -48,7 +48,7 @@ function ShareDialog(props) {
 
     const handleAdd = () => {
         const new_email = transemail(user);
-        if(new_email === undefined){alert("Invalid user"); return;}
+        if(new_email === undefined){errorAnnouncement("Invalid user"); return;}
 
         var ownerChange = new Boolean(false);
         const newList = [];
@@ -56,8 +56,8 @@ function ShareDialog(props) {
         switch(String(permIn)) {
             case 'owner':
                 const o_error = changeOwner(ogMap, new_email)
-                if(o_error == 1){alert("Document must have an owner"); return;}
-                if(o_error == 2){alert("insufficient permissions"); return;}
+                if(o_error == 1){errorAnnouncement("Document must have an owner"); return;}
+                if(o_error == 2){errorAnnouncement("Insufficient permissions"); return;}
                 ownerChange = true;
                 // const owner = sharedUsers.find(x => x.perm === 'owner');
                 owner.perm = 'writer';
@@ -69,17 +69,17 @@ function ShareDialog(props) {
                 break;
             case 'writer':
                 const w_error = makeWriter(ogMap, new_email)
-                if(w_error == 1){alert("Document must have an owner"); return;}
-                if(w_error == 2){alert("insufficient permissions"); return;}
+                if(w_error == 1){errorAnnouncement("Document must have an owner"); return;}
+                if(w_error == 2){errorAnnouncement("Insufficient permissions"); return;}
 
                 break;
             case 'reader':
                 const r_error = makeReader(ogMap, new_email)
-                if(r_error == 1){alert("Document must have an owner"); return;}
-                if(r_error == 2){alert("insufficient permissions"); return;}
+                if(r_error == 1){errorAnnouncement("Document must have an owner"); return;}
+                if(r_error == 2){errorAnnouncement("Insufficient permissions"); return;}
                 break;
             default:
-                alert("Set permission");
+                errorAnnouncement("Set permission");
         }
         if (ownerChange) {
             setSharedUsers(newList);
@@ -97,8 +97,8 @@ function ShareDialog(props) {
         switch(String(value)) {
             case 'owner':
                 const o_error = changeOwner(ogMap, id)
-                if(o_error == 1){alert("Document must have an owner"); return;}
-                if(o_error == 2){alert("insufficient permissions"); return;}
+                if(o_error == 1){errorAnnouncement("Document must have an owner"); return;}
+                if(o_error == 2){errorAnnouncement("Insufficient permissions"); return;}
                 // const owner = newList.find(x => x.perm === 'owner');
                 ownerChange = true;
                 owner.perm = 'writer';
@@ -109,22 +109,23 @@ function ShareDialog(props) {
                 break;
             case 'writer':
                 const w_error = makeWriter(ogMap, id)
-                if(w_error == 1){alert("Document must have an owner"); return;}
-                if(w_error == 2){alert("insufficient permissions"); return;}
+                if(w_error == 1){errorAnnouncement("Document must have an owner"); return;}
+                if(w_error == 2){errorAnnouncement("Insufficient permissions"); return;}
                 break;
             case 'reader':
                 const r_error = makeReader(ogMap, id)
-                if(r_error == 1){alert("Document must have an owner"); return;}
-                if(r_error == 2){alert("insufficient permissions"); return;}
+                if(r_error == 1){errorAnnouncement("Document must have an owner"); return;}
+                if(r_error == 2){errorAnnouncement("Insufficient permissions"); return;}
                 break;
             case 'del':
                 console.log("Trying to remove")
                 const rem_error = removeAccess(ogMap, id)
-                if(rem_error == 1){alert("Document must have an owner"); return;}
-                if(rem_error == 2){alert("insufficient permissions"); return;}
+                if(rem_error == 1){errorAnnouncement("Document must have an owner"); return;}
+                if(rem_error == 2){errorAnnouncement("Insufficient permissions"); return;}
                 newList.splice(newList.findIndex(x => x.id === id), 1);
                 setSharedUsers(newList);
                 shareChange(ogMap);
+                navigate('/home')
                 return;
             default:
         }
@@ -358,7 +359,7 @@ export default function DocEditor({ database }) {
     const deleteDocument = () => {
         let auth = getAuth();
         let user = auth.currentUser;
-        if(shareUsers[user.uid] != "owner"){alert("Insufficient permissions"); return;}
+        if(shareUsers[user.uid] != "owner"){errorAnnouncement("Insufficient permissions"); return;}
         deleteDoc(doc(collectionRef, params.id));
         console.log("Deleting Doc. ID: ", params.id);
         console.log("Deleting Title: ", docTitle);
@@ -769,6 +770,7 @@ export default function DocEditor({ database }) {
                 shareChange = {shareChange}
                 owner = {owner}
                 setOwner = {setOwner}
+                errorAnnouncement = {errorAnnouncement}
             />
         </div>
     );
