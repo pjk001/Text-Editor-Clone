@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { create } from '@mui/material/styles/createTransitions';
 
-import { auth, app } from "../firebaseConfig"
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
 import { Dialog, TextField } from '@mui/material';
 import PropTypes from 'prop-types';
@@ -178,9 +176,9 @@ export default function Home({database}) {
         });
     }
 
-    const docWithNoEdits = () => {
+    // const docWithNoEdits = () => {
 
-    }
+    // }
     // Notifications from other pages
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);

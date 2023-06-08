@@ -1,8 +1,7 @@
 import './App.css';
 import Home from './components/home';
 import DocEditor from './components/DocEditor';
-import { app, database } from './firebaseConfig';
-import { auth } from './firebaseConfig'
+import { database } from './firebaseConfig';
 import { Routes, Route } from "react-router-dom";
 import Login from './components/login_page';
 import Signup from './components/signup_page';

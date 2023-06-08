@@ -98,7 +98,6 @@
   background-color: #e6c258;
 }
 
-
 .doc-title-input {
   font-size: 24px;
   font-weight: bold;
@@ -144,13 +143,6 @@
   background-color: rgba(255, 255, 255, 0.35);
   animation: glow 1.5s infinite;
 }
-
-.share-user-text {
-  min-width: 200px;
-  overflow-x: auto;
-  margin-right: 10px;
-}
-
 
 @keyframes glow {
   0% {

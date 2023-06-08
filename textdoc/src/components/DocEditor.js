@@ -2,7 +2,7 @@ import { useState, useEffect, React, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { collection, doc, getDoc, updateDoc, onSnapshot, deleteDoc, setDoc } from 'firebase/firestore';
+import { collection, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -49,8 +49,8 @@ function ShareDialog(props) {
         const new_email = transemail(user);
         if(new_email === undefined){errorAnnouncement("Invalid user"); return;}
 
-        var ownerChange = new Boolean(false);
-        const newList = [];
+        var ownerChange = false;
+        var newList = [];
 
         switch(String(permIn)) {
             case 'owner':
@@ -92,7 +92,7 @@ function ShareDialog(props) {
 
     const handlePermChange = (value, id) => {
         const newList = sharedUsers.slice();
-        var ownerChange = new Boolean(false);
+        var ownerChange = false;
         switch(String(value)) {
             case 'owner':
                 const o_error = changeOwner(ogMap, id)
@@ -166,7 +166,7 @@ function ShareDialog(props) {
                         <PersonIcon />
                     </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={owner.email} class="share-user-text"/>
+                    <ListItemText primary={owner.email} sx={{ minWidth: '250px', overflowX: 'auto', marginRight: '10px' }}/>
                     <FormControl fullWidth>
                         <InputLabel id="share-select-label">Permission</InputLabel>
                         <Select
@@ -192,7 +192,7 @@ function ShareDialog(props) {
                         <PersonIcon />
                     </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={u.email} class="share-user-text"/>
+                    <ListItemText primary={u.email} sx={{ minWidth: '250px', overflowX: 'auto', marginRight: '10px' }}/>
                     <FormControl fullWidth>
                         <InputLabel id="share-select-label">Permission</InputLabel>
                         <Select
