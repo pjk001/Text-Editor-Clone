@@ -38,7 +38,9 @@ function ShareDialog(props) {
     const { onClose, open, user, setUser, sharedUsers, setSharedUsers, permIn, setPermIn, ogMap, shareChange, owner, setOwner, errorAnnouncement } = props;
     let navigate = useNavigate()
     const handleClose = () => {
-      onClose();
+        setUser('');
+        setPermIn('');
+        onClose();
     };
 
     const inUser = (value) => {
@@ -143,7 +145,7 @@ function ShareDialog(props) {
             {onClose ? (
                 <IconButton
                 aria-label="close"
-                onClick={onClose}
+                onClick={handleClose}
                 sx={{
                     position: 'absolute',
                     right: 8,
