@@ -81,6 +81,7 @@ function ShareDialog(props) {
                 break;
             default:
                 errorAnnouncement("Set permission");
+                return;
         }
         if (ownerChange) {
             setSharedUsers(newList);
