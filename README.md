@@ -1,10 +1,12 @@
 # cs35l-text-editor
 
-After cloning this repository, to make the text editor run, make sure you have Node installed, and run the following shell commands, once you've cd'd into this directory.
+After cloning this repository, to make the text editor run, make sure you have Node.js installed, and run the following shell commands, once you've `cd`'d into this directory.
 
-`cd textdoc`
-`npm install`
-`npm start`
+```
+cd textdoc
+npm install
+npm start
+```
 
 To use the text editor, please make an account first, following the link on the login page. You can then access a home page containing a collection of all your documents after logging in. 
 
